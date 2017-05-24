@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 # coding=utf-8
-##################################################
+
+from Trigger import *
 from utility import *
 
 ##################################################
@@ -98,18 +99,26 @@ def create_coke_tower():
 #          underground             #
 ####################################
 
+# a dictionary to convert number to trap
+trap = {
+    0: FallIntoLavaTrap,
+}
+
 
 def create_maze_floor(floor):
     """
-            create a floor of the maze
-        file structure:
-        length, width, height of maze
-        x, y, z position of first block of maze
-        x_in, z_in relative position of player when first in floor
-        x_out, z_out 
-        # #  #  #####   ...
-        # ##  #  ########...
-        # = block
+            Create a floor of the maze
+            File structure:
+        length width height : dimensions of the maze
+        x y z               : position of first block of maze
+        x_in z_in           : relative position of player when first in floor
+        x_out z_out         : relative position of player when finish in floor
+        [map of maze]
+        ' '        = air
+        '#'        = stone wall
+        '*'        = torch
+        '[number]' = trap
+        
     """
 
     # load data from file to array
@@ -121,24 +130,34 @@ def create_maze_floor(floor):
     # create maze
     for i in xrange(l):
         for j in xrange(w):
-            # TODO more type of block
-            block_type = 2 if maze_map[i][j] == '#' else 0
-            for k in xrange(h):
-                mc.setBlock(x + i, y + k, z + j, block_type)
+            # find the correct block to build
+            if maze_map[i][j] == ' ' or maze_map[i][j] == '*':
+                block = AIR
+            elif maze_map[i][j] == '#':
+                block = STONE
+            else:
+                block = trap[int(maze_map[i][j])](x + i, y, z + j)
+
+            # build
+            for k in xrange(h + 1):
+                mc.setBlock(x + i, y + k, z + j, block)
+
+            # if '*' then create a torch at the highest block
+            mc.setBlock(x + i, y + h, z + j, TORCH)
 
 
 def create_mazes():
     """create floors of the maze"""
     for i in xrange(number_of_floor):
-        create_maze_floor(mc, i)
+        create_maze_floor(i)
 
 
-def create_elevator():
-    """create a elevator"""
+def create_ladder_room():
+    """create a room with ladders lead to upper floor"""
 
 
-def create_elevators():
-    """create elevators connecting floors of maze"""
+def create_ladder_rooms():
+    """create ladders to connect floors of maze"""
 
 
 def create_mobs():
