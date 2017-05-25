@@ -3,7 +3,7 @@
 import utility
 from mcpi.block import *
 from mcpi.vec3 import *
-
+from time import *
 
 #################################################
 #         Base classes for all triggers         #
@@ -114,6 +114,49 @@ class FallIntoLavaTrap(FallTrap):
         FallTrap.__init__(self, x, y, z, 3, STONE.id, 0, True)
         utility.mc.setBlock(x, self.depth, z, LAVA)
 
+
+class PushBackTrap(TriggerStepOn):
+    def __init__(self, x, y, z):
+        TriggerStepOn.__init__(self, x, y, z, STONE.id, 0, True)
+        # TODO do PushBack
+
+
+class FlowLava_xMod(TriggerStepOn):
+    def __init__(self, x, y, z):
+        TriggerStepOn.__init__(self, x, y, z, STONE.id, 0, True)
+        utility.mc.setBlock(x + 5, y, z, LAVA)
+        utility.mc.setBlock(x - 5, y, z, LAVA)
+
+
+class FlowWayLava_zMod(TriggerStepOn):
+    def __init__(self, x, y, z):
+        TriggerStepOn.__init__(self, x, y, z, STONE.id, 0, True)
+        utility.mc.setBlock(x, y, z + 5, LAVA)
+        utility.mc.setBlock(x, y, z - 5, LAVA)
+
+
+class BlockWay_xMod(TriggerStepOn):
+    def __init__(self, x, y, z):
+        TriggerStepOn.__init__(self ,x, y, z, STONE.id, 0, True)
+        for i in xrange(3):
+            utility.mc.setBlock(x + 3, y + 1, z, LAVA_STATIONARY)
+            utility.mc.setBlock(x - 3, y + 1, z, LAVA_STATIONARY)
+            sleep(3)
+
+class BlockWay_zMod(TriggerStepOn):
+    def __init__(self, x, y, z):
+        TriggerStepOn.__init__(self, x, y, z, STONE.id, 0, True)
+        for i in xrange(3):
+            utility.mc.setBlock(x, y + 1, z + 3, LAVA_STATIONARY)
+            utility.mc.setBlock(x, y + 1, z - 3, LAVA_STATIONARY)
+            y += 1
+            sleep(3)
+
+
+class FallSand(TriggerStepOn):
+    def __init__(self, x, y, z):
+        TriggerStepOn.__init__(self, x, y, z, STONE.id, 0, True)
+        utility.mc.setBlock(x, y + 3, z, SAND)
 ################################################
 #                 Final trap                   #
 ################################################
