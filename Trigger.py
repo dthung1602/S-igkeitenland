@@ -121,42 +121,126 @@ class PushBackTrap(TriggerStepOn):
         # TODO do PushBack
 
 
-class FlowLava_xMod(TriggerStepOn):
+class FlowWayLava_x(TriggerStepOn):
+    """
+    block both directions w/ lava(change x)
+    """
     def __init__(self, x, y, z):
         TriggerStepOn.__init__(self, x, y, z, STONE.id, 0, True)
+
+    def action(self):
+        x = utility.pos.x
+        y = utility.pos.y
+        z = utility.pos.z
         utility.mc.setBlock(x + 5, y, z, LAVA)
+        utility.mc.setBlock(x + 6, y, z, STONE)
         utility.mc.setBlock(x - 5, y, z, LAVA)
+        utility.mc.setBlock(x - 6, y, z, STONE)
 
 
-class FlowWayLava_zMod(TriggerStepOn):
+class FlowWayLava_z(TriggerStepOn):
+    """
+    block both directions w/ lava(change z)
+    """
     def __init__(self, x, y, z):
         TriggerStepOn.__init__(self, x, y, z, STONE.id, 0, True)
+
+    def action(self):
+        x = utility.pos.x
+        y = utility.pos.y
+        z = utility.pos.z
         utility.mc.setBlock(x, y, z + 5, LAVA)
+        utility.mc.setBlock(x, y, z + 6, STONE)
         utility.mc.setBlock(x, y, z - 5, LAVA)
+        utility.mc.setBlock(x, y, z - 6, STONE)
 
 
-class BlockWay_xMod(TriggerStepOn):
+class BlockWay_x(TriggerStepOn):
+    """
+    block ways w/ rising blocks (change x)
+    """
     def __init__(self, x, y, z):
         TriggerStepOn.__init__(self ,x, y, z, STONE.id, 0, True)
-        for i in xrange(3):
-            utility.mc.setBlock(x + 3, y + 1, z, LAVA_STATIONARY)
-            utility.mc.setBlock(x - 3, y + 1, z, LAVA_STATIONARY)
-            sleep(3)
 
-class BlockWay_zMod(TriggerStepOn):
+    def action(self):
+        x = utility.pos.x
+        y = utility.pos.y
+        z = utility.pos.z
+        for i in xrange(4):
+            utility.mc.setBlock(x + 5, y, z, STONE_BRICK)
+            utility.mc.setBlock(x - 5, y, z, STONE_BRICK)
+            y += 1
+            sleep(2)
+
+
+class BlockWay_z(TriggerStepOn):
+    """
+    block ways w/ rising blocks (change z)
+    """
     def __init__(self, x, y, z):
         TriggerStepOn.__init__(self, x, y, z, STONE.id, 0, True)
-        for i in xrange(3):
-            utility.mc.setBlock(x, y + 1, z + 3, LAVA_STATIONARY)
-            utility.mc.setBlock(x, y + 1, z - 3, LAVA_STATIONARY)
+
+    def action(self):
+        x = utility.pos.x
+        y = utility.pos.y
+        z = utility.pos.z
+        for i in xrange(4):
+            utility.mc.setBlock(x, y, z + 3, STONE_BRICK)
+            utility.mc.setBlock(x, y, z - 3, STONE_BRICK)
             y += 1
             sleep(3)
 
 
 class FallSand(TriggerStepOn):
+    """
+    sand fall on ur head
+    """
     def __init__(self, x, y, z):
         TriggerStepOn.__init__(self, x, y, z, STONE.id, 0, True)
-        utility.mc.setBlock(x, y + 3, z, SAND)
+
+    def action(self):
+        utility.mc.setBlock(utility.pos.x, utility.pos.y + 3, utility.pos.z, SAND)
+
+
+class TrapInHole_x(TriggerStepOn):
+    """
+    trap you in a hole with closing door (change x)
+    """
+    def __init__(self, x, y, z):
+        TriggerStepOn.__init__(self, x, y, z, STONE.id, 0, True)
+
+    def action(self):
+        x = utility.pos.x
+        y = utility.pos.y
+        z = utility.pos.z
+        utility.mc.setBlocks(x, y - 1, z, x + 5, y - 3, z, AIR)
+        sleep(3)
+        for i in xrange(6):
+            utility.mc.setBlock(x, y - 1, z, 89)
+            x += 1
+            sleep(1)
+
+
+class TrapInHole_z(TriggerStepOn):
+    """
+    trap you in a hole with closing door (change x)
+    """
+    def __init__(self, x, y, z):
+        TriggerStepOn.__init__(self, x, y, z, STONE.id, 0, True)
+
+    def action(self):
+        x = utility.pos.x
+        y = utility.pos.y
+        z = utility.pos.z
+        utility.mc.setBlocks(x, y - 1, z, x, y - 3, z + 5, AIR)
+        sleep(3)
+        for i in xrange(6):
+            utility.mc.setBlock(x, y - 1, z, 89)
+            z += 1
+            sleep(1)
+
+
+
 ################################################
 #                 Final trap                   #
 ################################################
