@@ -2,10 +2,10 @@
 # coding=utf-8
 
 from Trap import *
-from mcpi.minecraft import Minecraft
-import Global
 from copy import deepcopy
 from Draw import *
+from random import randint
+from mcpi.minecraft import Minecraft
 
 mc = Minecraft.create()
 
@@ -26,24 +26,94 @@ def create_ground():
     mc.setBlocks(127, 63, 127, -128, Global.ground_height, -128, 0)
 
 
-def create_mountain():
-    """create a mountain"""
-    pass
-
-
 def create_craggy_mountains():
-    """create tall mountains surround map"""
-    pass
+    """create tall mountains surround the land"""
+
+    y = Global.ground_height
+    mountain_width = 10
+    max_init_height = 3
+    min_init_height = 1
+    max_height_inc = 4
+    min_height_inc = 1
+    snow_height = 30
+
+    # northern mountains
+    for x in xrange(-128, 128):
+        height = randint(min_init_height, max_init_height)
+        mountain_width = mountain_width + randint(-1, 1)
+        snow_height += randint(-2, 2)
+        for z in xrange(-128 + mountain_width, -128, -1):
+            mc.setBlocks(x, y, z, x, y + height, z, GRASS)
+            if height > snow_height:
+                mc.setBlock(x, y + height + 1, z, SNOW)
+            height += randint(min_height_inc, max_height_inc)
+
+    # western mountains
+    for z in xrange(-128, 128):
+        height = randint(min_init_height, max_init_height)
+        mountain_width = mountain_width + randint(-1, 1)
+        snow_height += randint(-2, 2)
+        for x in xrange(-128 + mountain_width, -128, -1):
+            mc.setBlocks(x, y, z, x, y + height, z, GRASS)
+            if height > snow_height:
+                mc.setBlock(x, y + height + 1, z, SNOW)
+            height += randint(min_height_inc, max_height_inc)
+
+    # eastern mountains
+    for z in xrange(-128, 128):
+        height = randint(min_init_height, max_init_height)
+        mountain_width = mountain_width + randint(-1, 1)
+        snow_height += randint(-2, 2)
+        for x in xrange(128 - mountain_width, 128):
+            mc.setBlocks(x, y, z, x, y + height, z, GRASS)
+            if height > snow_height:
+                mc.setBlock(x, y + height + 1, z, SNOW)
+            height += randint(min_height_inc, max_height_inc)
 
 
-def create_tree():
-    """create one tree"""
-    pass
+def create_tree(x, y, z):
+    """create one tree in old forest"""
+
+    def create_leave(height, height_of_leave, width_of_leave):
+        for i in xrange(height_of_leave):
+            if width_of_leave < 2:
+                width_of_leave = 2
+            mc.setBlocks(x - width_of_leave / 2, height + i, z - width_of_leave / 2,
+                         x + width_of_leave / 2, height + i, z + width_of_leave / 2, LEAVES)
+            width_of_leave -= 2
+
+    tree_height = randint(20, 35)
+
+    # trunk
+    mc.setBlocks(x, y, z, x - 1, y + tree_height * 2 / 3, z + 1, WOOD)
+    mc.setBlocks(x, y + tree_height * 2 / 3, z, x, y + tree_height, z, WOOD)
+
+    # leaves at the top
+    mc.setBlocks(x - 1, y + tree_height, z - 1, x + 1, y + tree_height, z + 1, LEAVES)
+    mc.setBlocks(x - 1, y + tree_height + 1, z, x + 1, y + tree_height + 1, z, LEAVES)
+    mc.setBlocks(x, y + tree_height + 1, z - 1, x, y + tree_height + 1, z + 1, LEAVES)
+    mc.setBlock(x, y + tree_height + 2, z, LEAVES)
+
+    # leaves floors
+    leave_height = 2
+    leave_width = 5
+    h = y + tree_height - leave_height - 1
+
+    while h > y + tree_height / 3:
+        create_leave(h, leave_height, leave_width)
+        leave_height += 1
+        leave_width += 2
+        h -= 1 + leave_height
 
 
 def create_forest():
     """ create a forest at the south of the map"""
-    pass
+    for i in xrange(100):
+        print i
+        x = randint(-120, 120)
+        z = randint(80, 120)
+        y = Global.ground_height
+        create_tree(x, y, z)
 
 
 def create_corn_mountain(x, y, z, h, r):
@@ -302,5 +372,6 @@ def create_mobs():
 
 
 if __name__ == "__main__":
-    x, y, z = Global.mc.player.getTilePos()
-    create_cane_candy_forest()
+    print "start"
+    create_forest()
+    print "done"
