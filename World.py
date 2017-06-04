@@ -40,7 +40,7 @@ def create_craggy_mountains():
     # northern mountains
     for x in xrange(-128, 128):
         height = randint(min_init_height, max_init_height)
-        mountain_width = mountain_width + randint(-1, 1)
+        mountain_width = max(mountain_width + randint(-1, 1), 10)
         snow_height += randint(-2, 2)
         for z in xrange(-128 + mountain_width, -128, -1):
             mc.setBlocks(x, y, z, x, y + height, z, GRASS)
@@ -51,7 +51,7 @@ def create_craggy_mountains():
     # western mountains
     for z in xrange(-128, 128):
         height = randint(min_init_height, max_init_height)
-        mountain_width = mountain_width + randint(-1, 1)
+        mountain_width = max(mountain_width + randint(-1, 1), 10)
         snow_height += randint(-2, 2)
         for x in xrange(-128 + mountain_width, -128, -1):
             mc.setBlocks(x, y, z, x, y + height, z, GRASS)
@@ -62,7 +62,7 @@ def create_craggy_mountains():
     # eastern mountains
     for z in xrange(-128, 128):
         height = randint(min_init_height, max_init_height)
-        mountain_width = mountain_width + randint(-1, 1)
+        mountain_width = max(mountain_width + randint(-1, 1), 10)
         snow_height += randint(-2, 2)
         for x in xrange(128 - mountain_width, 128):
             mc.setBlocks(x, y, z, x, y + height, z, GRASS)
@@ -133,7 +133,7 @@ def create_corn_mountain(x, y, z, h, r):
             block_type = STONE
         else:
             block_type = GRASS
-        draw_horizontal_circle_outline(x, y + i, z, r * sqrt(1 - (y * 1.0 + i) / (y + h)), block_type)
+        draw_horizontal_circle(x, y + i, z, r * sqrt(1 - (y * 1.0 + i) / (y + h)), block_type)
 
     # create the roof
     draw_horizontal_circle(x, y + h, z, r * sqrt(1 - (y + h - 1.0) / (y + h)), GRASS)
@@ -141,7 +141,13 @@ def create_corn_mountain(x, y, z, h, r):
 
 def create_corn_candy_mountains():
     """ create a forest at the south of the map"""
-    pass
+    for i in xrange(10):
+        x = randint(-90, -10)
+        z = randint(-100, -30)
+        y = Global.ground_height
+        h = randint(20, 45)
+        r = min(randint(10, 15), h / 3)
+        create_corn_mountain(x, y, z, h, r)
 
 
 def create_river():
@@ -149,24 +155,48 @@ def create_river():
     pass
 
 
-def create_hill():
-    """create an ice-cream hill"""
-
-
 def create_ice_cream_hills():
     """create ice cream hills at the west of the map"""
+    for i in xrange(10):
+        x = randint(-100, -30)
+        z = randint(0, 110)
+        y = Global.ground_height
+        r = randint(20, 30)
+        color = randint(0, 2)
+        block = {
+            0: STONE,
+            1: GLASS,
+            2: GOLD_BLOCK,
+            3: GLOWING_OBSIDIAN
+        }
+        draw_sphere(x, y, z, r, block[color])
 
 
-def create_lollipop(x, y, z, r, h, block_type, block_data):
+def create_lollipop(x, y, z, r, h, block_type, block_data=0):
     """create a lollipop"""
     # Create the lollipop stick
     mc.setBlocks(x, y + h, z, x, y, z, ICE)
     # Create the lollipop top
-    draw_sphere(x, y + h, z, r, block_type, block_data)
+    draw_sphere(x, y + h + r, z, r, block_type, block_data)
 
 
 def create_lollipop_forest():
     """create a lollipop forest at the south of the map"""
+    for i in xrange(150):
+        print i
+        x = randint(-90, 110)
+        z = randint(0, 90)
+        y = Global.ground_height
+        r = randint(3, 6)
+        h = max(r + 1, randint(3, 6))
+        color = randint(0, 3)
+        block = {
+            0: STONE,
+            1: GLASS,
+            2: GOLD_BLOCK,
+            3: GLOWING_OBSIDIAN
+        }
+        create_lollipop(x, y, z, r, h, block[color])
 
 
 def create_cane_candy(x, y, z, candy_data):
@@ -231,12 +261,15 @@ def create_cane_candy_forest():
 
     west = deepcopy(east)[::-1]
 
+    direction = [north, south, west, east]
+
     # TODO tmp
-    global x, y, z
-    create_cane_candy(x + 15, y, z, south)
-    create_cane_candy(x + 20, y, z, north)
-    create_cane_candy(x, y, z + 15, east)
-    create_cane_candy(x, y, z + 20, west)
+    for i in xrange(100):
+        x = randint(-20, 110)
+        z = randint(-110, 0)
+        y = Global.ground_height
+        rand = randint(0, 3)
+        create_cane_candy(x, y, z, direction[rand])
 
 
 def create_oreo(x, y, z, r):
@@ -251,6 +284,12 @@ def create_oreo(x, y, z, r):
 
 def create_oreos():
     """create oreos at the east of the map"""
+    for i in xrange(8):
+        x = randint(50, 100)
+        z = randint(-50, 0)
+        y = Global.ground_height
+        r = randint(10, 20)
+        create_oreo(x, y, z, r)
 
 
 def create_cupcake_house(x, y, z, r):
@@ -270,9 +309,15 @@ def create_cupcake_house(x, y, z, r):
 
 def create_cupcake_village():
     """create cup cake village in the center of the map"""
+    for i in xrange(15):
+        x = randint(-40, 40)
+        z = randint(-40, 40)
+        y = Global.ground_height
+        r = randint(3, 9)
+        create_cupcake_house(x, y, z, r)
 
 
-def create_coke_tower(x, y, z):
+def create_coke_tower():
     """
     create_coke_tower at the north of the village
     x, y, z: position of center of lowest layer of tower
@@ -285,9 +330,10 @@ def create_coke_tower(x, y, z):
 
     f = open('data/candy/coke_tower.txt', 'r')
 
+    y = Global.ground_height
     for line in f:
         r, color = line.strip().split(" ")
-        draw_horizontal_circle_outline(x, y, z, int(r), block_type[color[0]])
+        draw_horizontal_circle_outline(20, y, -20, int(r), block_type[color[0]])
         y += 1
 
 
@@ -372,6 +418,24 @@ def create_mobs():
 
 
 if __name__ == "__main__":
-    print "start"
-    create_forest()
-    print "done"
+    # print "Start"
+    # create_ground()
+    # print "ground done"
+    # create_craggy_mountains()
+    # print "craggy done"
+    # create_forest()
+    # print "forest done"
+    # create_corn_candy_mountains()
+    # print "corn done"
+    # create_ice_cream_hills()
+    # print "ice done"
+    # create_oreos()
+    # print "oreo"
+    create_lollipop_forest()
+    print "lollipop"
+    create_cupcake_village()
+    print "cupcake"
+    create_cane_candy_forest()
+    print "cane"
+    create_coke_tower()
+    print "coke"
