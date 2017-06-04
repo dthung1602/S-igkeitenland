@@ -342,12 +342,6 @@ def create_coke_tower():
 ####################################################################
 
 
-# a dictionary to convert number to trap
-trap = {
-    '0': FallIntoLavaTrap,
-}
-
-
 def create_maze_floor(floor, x, y, z):
     """
             Create a floor of the maze
@@ -385,7 +379,7 @@ def create_maze_floor(floor, x, y, z):
             if maze_map[i][j] == '*':
                 mc.setBlock(x + i, y + Global.floor_height, z + j, TORCH)
 
-            # if [number] then create a trap
+            # if [letter] then create a trap
             if isinstance(maze_map[i][j], int):
                 trap[maze_map[i][j]](x + i, y, z + j)
 

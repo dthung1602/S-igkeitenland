@@ -5,7 +5,8 @@ from mcpi import minecraft
 ######################################
 
 mc = minecraft.Minecraft.create()
-pos = mc.player.getPos()
+hansel = mc.player
+pos = hansel.getPos()
 tilePos = mc.player.getTilePos()
 
 triggers = []
@@ -38,6 +39,6 @@ z_surround = [-1, 0, 1, 1, 1, 0, -1, -1]
 ######################################
 
 def update_position():
-    global mc, pos, tilePos
-    pos = mc.player.getPos
-    tilePos = mc.player.getTilePos
+    global hansel, pos, tilePos
+    pos = hansel.getPos
+    tilePos = hansel.getTilePos

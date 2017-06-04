@@ -4,13 +4,13 @@ import Global
 from mcpi.block import *
 from mcpi.vec3 import *
 from time import *
+from random import choice
 import RPi.GPIO as GPIO
 
 
 ###################################################################################
 #                           Base classes for all triggers                         #
 ###################################################################################
-
 
 class TriggerStepOn(object):
     """Base class for blocks that trigger an event when it is step on"""
@@ -64,7 +64,7 @@ class TriggerComeClose(object):
 
 
 ###################################################################################
-#                                    Messages                                     #
+#                           Messages & Riddles                                    #
 ###################################################################################
 
 
@@ -79,59 +79,7 @@ class Message(TriggerComeClose):
         Global.mc.postToChat(self.message)
 
 
-###################################################################################
-#                                 Traps in the maze                               #
-###################################################################################
-
-
-# ------------------------------------------------------------------------------- #
-#                                      Falling                                    #
-# ------------------------------------------------------------------------------- #
-
-
-class FallTrap(TriggerStepOn):
-    def __init__(self, x, y, z, depth, block_type, block_data=0, one_time=True):
-        TriggerStepOn.__init__(self, x, y, z, block_type, block_data, one_time)
-        self.depth = self.pos.y - depth
-
-        # create a hole
-        Global.mc.setBlocks(self.pos.x, self.pos.y - 2, self.pos.z,
-                            self.pos.x, self.depth, self.pos.z, AIR)
-
-    def action(self):
-        Global.mc.setBlock(Global.tilePos.x, Global.tilePos.y - 1, Global.tilePos.z, AIR)
-
-
-class FallIntoMazeTrap(FallTrap):
-    """This will open a hole under Hansel and he 
-    will fall into the lowest level of the maze"""
-
-    def __init__(self, x, y, z):
-        FallTrap.__init__(self, x, y, z, (Global.floor_height + 4) * Global.number_of_floor, STONE.id, 0, True)
-
-        # create a chamber at the end of the hole
-        Global.mc.setBlocks(Global.pos.x - 5, self.depth, Global.pos.z - 5,
-                            Global.pos.x + 5, self.depth - 5, Global.pos.z + 5, AIR)
-
-        # create water in the chamber to catch hansel
-        Global.mc.setBlocks(Global.pos.x - 6, self.depth - 6, Global.pos.z - 6,
-                            Global.pos.x + 5, self.depth - 12, Global.pos.z + 6, GLOWSTONE_BLOCK)
-        Global.mc.setBlocks(Global.pos.x - 5, self.depth - 5, Global.pos.z - 5,
-                            Global.pos.x + 5, self.depth - 12, Global.pos.z + 5, WATER)
-
-
-class FallIntoLavaTrap(FallTrap):
-    def __init__(self, x, y, z):
-        FallTrap.__init__(self, x, y, z, 3, STONE.id, 0, True)
-        Global.mc.setBlock(x, self.depth, z, LAVA)
-
-
-# ------------------------------------------------------------------------------- #
-#                                       Riddle                                    #
-# ------------------------------------------------------------------------------- #
-
 class Riddle(TriggerComeClose):
-    # TODO read 'static var'
     riddle_num = 0
     number_of_riddle = 5
 
@@ -169,7 +117,7 @@ class Riddle(TriggerComeClose):
         Global.mc.postToChat("Wrong!")
         for x in Global.x_surround:
             for z in Global.z_surround:
-                # TODO choose some random trap
+                choice(trap.keys())
                 FallIntoLavaTrap(Global.pos.x + x, Global.pos.y, Global.pos.z + z)
 
     def right(self):
@@ -196,10 +144,188 @@ class Riddle(TriggerComeClose):
 
 
 ###################################################################################
+#                                 Traps in the maze                               #
+###################################################################################
+
+
+class FallTrap(TriggerStepOn):
+    def __init__(self, x, y, z, depth, block_type, block_data=0, one_time=True):
+        TriggerStepOn.__init__(self, x, y, z, block_type, block_data, one_time)
+        self.depth = self.pos.y - depth
+
+        # create a hole
+        Global.mc.setBlocks(self.pos.x, self.pos.y - 2, self.pos.z,
+                            self.pos.x, self.depth, self.pos.z, AIR)
+
+    def action(self):
+        Global.mc.setBlock(Global.tilePos.x, Global.tilePos.y - 1, Global.tilePos.z, AIR)
+
+
+class FallIntoMazeTrap(FallTrap):
+    """This will open a hole under Hansel and he 
+    will fall into the lowest level of the maze"""
+
+    def __init__(self, x, y, z):
+        FallTrap.__init__(self, x, y, z, (Global.floor_height + 4) * Global.number_of_floor, STONE.id, 0, True)
+
+        # create a chamber at the end of the hole
+        Global.mc.setBlocks(Global.pos.x - 5, self.depth, Global.pos.z - 5,
+                            Global.pos.x + 5, self.depth - 5, Global.pos.z + 5, AIR)
+
+        # create water in the chamber to catch hansel
+        Global.mc.setBlocks(Global.pos.x - 6, self.depth - 6, Global.pos.z - 6,
+                            Global.pos.x + 5, self.depth - 12, Global.pos.z + 6, GLOWSTONE_BLOCK)
+        Global.mc.setBlocks(Global.pos.x - 5, self.depth - 5, Global.pos.z - 5,
+                            Global.pos.x + 5, self.depth - 12, Global.pos.z + 5, WATER)
+
+
+class FallIntoLavaTrap(FallTrap):
+    """player fall into lava"""
+
+    def __init__(self, x, y, z):
+        FallTrap.__init__(self, x, y, z, 3, STONE.id, 0, True)
+        Global.mc.setBlock(x, self.depth, z, LAVA)
+
+
+class PushBackTrap(TriggerComeClose):
+    def __init__(self, x, y, z):
+        TriggerComeClose.__init__(self, x, y, z, 5, STONE.id, 0, False)
+        self.old_pos = None
+
+    @staticmethod
+    def move_player(vec3):
+        new_pos = vec3 + Global.pos
+        Global.hansel.setPos(new_pos.x, new_pos.y, new_pos.z)
+        sleep(0.1)
+
+    def action(self):
+        if self.distance() > self.d / 3:
+            self.old_pos = Global.pos
+        else:
+            step = self.old_pos - Global.pos
+            for i in xrange(20):
+                self.move_player(step)
+
+
+class FlowLavaBlockWayX(TriggerStepOn):
+    """block both x directions with lava"""
+
+    def __init__(self, x, y, z):
+        TriggerStepOn.__init__(self, x, y, z, STONE.id, 0, True)
+
+    def action(self):
+        x = Global.pos.x
+        y = Global.pos.y
+        z = Global.pos.z
+        Global.mc.setBlock(x + 5, y, z, LAVA)
+        Global.mc.setBlock(x + 6, y, z, STONE)
+        Global.mc.setBlock(x - 5, y, z, LAVA)
+        Global.mc.setBlock(x - 6, y, z, STONE)
+
+
+class FlowLavaBlockWayZ(TriggerStepOn):
+    """block both z directions with lava"""
+
+    def __init__(self, x, y, z):
+        TriggerStepOn.__init__(self, x, y, z, STONE.id, 0, True)
+
+    def action(self):
+        x = Global.pos.x
+        y = Global.pos.y
+        z = Global.pos.z
+        Global.mc.setBlock(x, y, z + 5, LAVA)
+        Global.mc.setBlock(x, y, z + 6, STONE)
+        Global.mc.setBlock(x, y, z - 5, LAVA)
+        Global.mc.setBlock(x, y, z - 6, STONE)
+
+
+class StoneBlockWayX(TriggerStepOn):
+    """block x ways with rising blocks"""
+
+    def __init__(self, x, y, z):
+        TriggerStepOn.__init__(self, x, y, z, STONE.id, 0, True)
+
+    def action(self):
+        x = Global.pos.x
+        y = Global.pos.y
+        z = Global.pos.z
+        for i in xrange(4):
+            Global.mc.setBlock(x + 5, y, z, STONE_BRICK)
+            Global.mc.setBlock(x - 5, y, z, STONE_BRICK)
+            y += 1
+            sleep(2)
+
+
+class StoneBlockWayZ(TriggerStepOn):
+    """block z ways with rising blocks"""
+
+    def __init__(self, x, y, z):
+        TriggerStepOn.__init__(self, x, y, z, STONE.id, 0, True)
+
+    def action(self):
+        x = Global.pos.x
+        y = Global.pos.y
+        z = Global.pos.z
+        for i in xrange(4):
+            Global.mc.setBlock(x, y, z + 3, STONE_BRICK)
+            Global.mc.setBlock(x, y, z - 3, STONE_BRICK)
+            y += 1
+            sleep(3)
+
+
+class FallSand(TriggerStepOn):
+    """ sand fall on player's head"""
+
+    def __init__(self, x, y, z):
+        TriggerStepOn.__init__(self, x, y, z, STONE.id, 0, True)
+
+    def action(self):
+        Global.mc.setBlock(Global.pos.x, Global.pos.y + 3, Global.pos.z, SAND)
+
+
+class TrapInHoleX(TriggerStepOn):
+    """trap you in a hole with closing door"""
+
+    def __init__(self, x, y, z):
+        TriggerStepOn.__init__(self, x, y, z, STONE.id, 0, True)
+
+    def action(self):
+        x = Global.pos.x
+        y = Global.pos.y
+        z = Global.pos.z
+        Global.mc.setBlocks(x, y - 1, z, x + 5, y - 3, z, AIR)
+        sleep(2)
+        for i in xrange(6):
+            Global.mc.setBlock(x, y - 1, z, 89)
+            x += 1
+            sleep(1)
+
+
+class TrapInHoleZ(TriggerStepOn):
+    """trap you in a hole with closing door"""
+
+    def __init__(self, x, y, z):
+        TriggerStepOn.__init__(self, x, y, z, STONE.id, 0, True)
+
+    def action(self):
+        x = Global.pos.x
+        y = Global.pos.y
+        z = Global.pos.z
+        Global.mc.setBlocks(x, y - 1, z, x, y - 3, z + 5, AIR)
+        sleep(2)
+        for i in xrange(6):
+            Global.mc.setBlock(x, y - 1, z, 89)
+            z += 1
+            sleep(1)
+
+
+###################################################################################
 #                                   Final trap                                    #
 ###################################################################################
+
 class FinalTrap(TriggerComeClose):
     def __init__(self):
+        # TODO choose pos
         TriggerComeClose.__init__(self, 10, 10, 10, 5, AIR)
 
     def condition(self):
@@ -241,3 +367,17 @@ class FinalTrap(TriggerComeClose):
                 t = time()
 
         Global.mc.setBlocks(hole.x - 1, hole.y, hole.z - 1, hole.x + 1, hole.y - 6, hole.z + 1, AIR)
+
+
+# a dictionary to convert number to trap
+trap = {
+    'a': FallIntoLavaTrap,
+    'b': PushBackTrap,
+    'c': FlowLavaBlockWayX,
+    'D': FlowLavaBlockWayZ,
+    'e': StoneBlockWayX,
+    'F': StoneBlockWayZ,
+    'g': FallSand,
+    'h': TrapInHoleX,
+    'I': TrapInHoleZ,
+}
