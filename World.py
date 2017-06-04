@@ -91,8 +91,25 @@ def create_cupcake_village():
     """create cupcake village at the center of the map"""
 
 
-def create_coke_tower():
-    """create_coke_tower at the north of the village"""
+def create_coke_tower(x, y, z):
+    """
+    create_coke_tower at the north of the village
+    x, y, z: position of center of lowest layer of tower
+    """
+    block_type = {
+        "W" : WOOL,
+        "R" : STONE_BRICK,
+        "B" : GRASS,
+    }
+
+    file = open('data/coke_tower.txt', 'r')
+
+    for line in file:
+        r, color = line.split(" ")
+        draw.drawHorizontalCircle(x, y, z, int(r), block_type[color])
+        y += 1
+
+
 
 
 ####################################
@@ -101,7 +118,15 @@ def create_coke_tower():
 
 # a dictionary to convert number to trap
 trap = {
-    0: FallIntoLavaTrap,
+    'a': FallIntoLavaTrap,
+    'b': PushBackTrap,
+    'c': FlowLavaBlockWay_x,
+    'D': FlowLavaBlockWay_z,
+    'e': StoneBlockWay_x,
+    'F': StoneBlockWay_z,
+    'g': FallSand,
+    'h': TrapInHole_x,
+    'I': TrapInHole_z,
 }
 
 

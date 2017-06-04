@@ -115,13 +115,25 @@ class FallIntoLavaTrap(FallTrap):
         utility.mc.setBlock(x, self.depth, z, LAVA)
 
 
-class PushBackTrap(TriggerStepOn):
-    def __init__(self, x, y, z):
-        TriggerStepOn.__init__(self, x, y, z, STONE.id, 0, True)
-        # TODO do PushBack
+class PushBackTrap(TriggerComeClose):
+    def __init__(self, x, y, z, d):
+        TriggerComeClose.__init__(self, x, y, z, d, STONE.id, 0, False)
+
+    def movePlayer(self, vec3):
+        newPos = vec3 + utility.pos
+        utility.hansel.setPos(newPos.x, newPos.y, newPos.z)
+
+    def action(self):
+        if self.distance() > d / 3:
+            self.oldPos = utility.pos
+        else:
+            step = self.oldPos - utility.pos
+            for i in xrange(20):
+                self.movePlayer(step)
+                sleep(0.1)
 
 
-class FlowWayLava_x(TriggerStepOn):
+class FlowLavaBlockWay_x(TriggerStepOn):
     """
     block both directions w/ lava(change x)
     """
@@ -138,7 +150,7 @@ class FlowWayLava_x(TriggerStepOn):
         utility.mc.setBlock(x - 6, y, z, STONE)
 
 
-class FlowWayLava_z(TriggerStepOn):
+class FlowLavaBlockWay_z(TriggerStepOn):
     """
     block both directions w/ lava(change z)
     """
@@ -155,7 +167,7 @@ class FlowWayLava_z(TriggerStepOn):
         utility.mc.setBlock(x, y, z - 6, STONE)
 
 
-class BlockWay_x(TriggerStepOn):
+class StoneBlockWay_x(TriggerStepOn):
     """
     block ways w/ rising blocks (change x)
     """
@@ -173,7 +185,7 @@ class BlockWay_x(TriggerStepOn):
             sleep(2)
 
 
-class BlockWay_z(TriggerStepOn):
+class StoneBlockWay_z(TriggerStepOn):
     """
     block ways w/ rising blocks (change z)
     """
