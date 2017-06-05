@@ -85,10 +85,11 @@ def create_tree(x, y, z):
             width_of_leave : how wide this leave floor is
         """
         for i in xrange(height_of_leave):
-            if width_of_leave < 2:
-                width_of_leave = 2
             mc.setBlocks(x - width_of_leave / 2, height + i, z - width_of_leave / 2,
                          x + width_of_leave / 2, height + i, z + width_of_leave / 2, LEAVES)
+            mc.setBlocks(x - width_of_leave / 2 + randint(-1, 1), height + i, z - width_of_leave / 2 + randint(-1, 1),
+                         x + width_of_leave / 2 + randint(-1, 1), height + i, z + width_of_leave / 2 + randint(-1, 1),
+                         LEAVES)
             width_of_leave -= 2
 
     tree_height = randint(20, 35)
@@ -161,7 +162,39 @@ def create_corn_candy_mountains():
 # TODO create river
 def create_river():
     """create a chocolate river"""
-    pass
+
+    # origin of the river
+    x0 = 85 - 128
+    z = 50 - 128
+
+    # read data from file and create river
+    f = open("data/candy/river.txt")
+    for line in f:
+        # how wide the river
+        width = line.count('#') + 3
+
+        # where the first water block is
+        x = x0 + line.find('#')
+
+        # fill water up to ground height
+        y = Global.ground_height - 1
+
+        # create
+        for i in xrange(2):
+            mc.setBlocks(x, y, z, x + width, y, z, AIR)
+            width -= 2
+            x += 1
+            y -= 1
+
+        # create water
+        for i in xrange(4):
+            mc.setBlocks(x, y, z, x + width, y, z, WATER)
+            width -= 2
+            x += 1
+            y -= 1
+
+        # move to next line
+        z += 1
 
 
 def create_ice_cream_hills():
@@ -181,8 +214,8 @@ def create_lollipop(x, y, z):
     """create a lollipop"""
 
     # get random values
-    radius = randint(3, 6)
-    height = max(radius + 1, randint(3, 6))
+    radius = randint(3, 5)
+    height = max(radius + 1, randint(3, 5))
     block = choice(Global.color)
 
     # Create the lollipop stick
@@ -201,6 +234,7 @@ def create_lollipop_forest():
         z = randint(0, 90)
         if mc.getHeight(x, z) == y:
             create_lollipop(x, y, z)
+            i += 1
 
 
 def create_cane_candy(x, y, z, candy_data):
@@ -348,10 +382,17 @@ def create_coke_tower():
     # load data from file
     f = open('data/candy/coke_tower.txt', 'r')
 
+    # dictionary to convert data to block
+    block = {
+        'W': WOOL,
+        'R': BRICK_BLOCK,
+        'B': STONE
+    }
+
     # construct coke tower
     for line in f:
-        radius, block = line.strip().split(" ")
-        draw_horizontal_circle_outline(x, y, z, int(radius), Global.color[block])
+        radius, color = line.strip().split(" ")
+        draw_horizontal_circle_outline(x, y, z, int(radius), block[color])
         y += 1
 
 
@@ -427,6 +468,10 @@ def create_mazes():
 
 # test
 if __name__ == "__main__":
+    create_river()
+    print "river"
+    exit()
+
     # surface
     print "start"
     create_ground()
@@ -453,7 +498,7 @@ if __name__ == "__main__":
     print "cane"
 
     # underground
-    FallIntoMazeTrap(Global.pos.x, Global.pos.y - 1, Global.pos.z + 1)
+    FallIntoMazeTrap(0, 0, 0)
     create_mazes()
     print "maze"
     print "done"
