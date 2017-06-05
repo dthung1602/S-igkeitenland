@@ -1,11 +1,13 @@
 # coding=utf-8
 
+from random import choice
+from time import *
+
+import RPi.GPIO as GPIO
+
 import Global
 from mcpi.block import *
 from mcpi.vec3 import *
-from time import *
-from random import choice
-import RPi.GPIO as GPIO
 
 
 ###################################################################################
@@ -369,7 +371,7 @@ class FinalTrap(TriggerComeClose):
         Global.mc.setBlocks(hole.x - 1, hole.y, hole.z - 1, hole.x + 1, hole.y - 6, hole.z + 1, AIR)
 
 
-# a dictionary to convert number to trap
+# a dictionary to convert letter to trap
 trap = {
     'a': FallIntoLavaTrap,
     'b': PushBackTrap,

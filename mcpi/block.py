@@ -92,3 +92,26 @@ MELON               = Block(103)
 FENCE_GATE          = Block(107)
 GLOWING_OBSIDIAN    = Block(246)
 NETHER_REACTOR_CORE = Block(247)
+
+# WOOL:
+# 0: White
+# 1: Orange
+# 2: Magenta
+# 3: Light Blue
+# 4: Yellow
+# 5: Lime
+# 6: Pink
+# 7: Grey
+# 8: Light grey
+# 9: Cyan
+# 10: Purple
+# 11: Blue
+# 12: Brown
+# 13: Green
+# 14: Red
+# 15:Black
+
+# TODO wool color
+WOOL_WHITE = Block(35, 0)
+WOOL_ORANGE = Block(35, 1)
+WOOL_RED = Block(35, 14)

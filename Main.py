@@ -12,12 +12,13 @@
     Description: a MineCraft world based on “Hansel and Gretel” of the Brothers Grimm
     Connection:
     Reference: minecraftstuff package from www.github.com/martinohanlon/minecraft-stuff
-               It is used to create basic shapes (circle, line, etc)
+               It is used to create basic shapes (circle, line, sphere, etc)
 """
 
-from World import *
 import RPi.GPIO as GPIO
+
 import Global
+from World import *
 
 
 def main():
@@ -41,19 +42,18 @@ def main():
     # surface
     create_ground()
     create_craggy_mountains()
-    create_forest()
     create_corn_candy_mountains()
     create_river()
     create_ice_cream_hills()
-    create_lollipop_forest()
-    create_cane_candy_forest()
     create_oreos()
     create_cupcake_village()
     create_coke_tower()
+    create_forest()
+    create_lollipop_forest()
+    create_cane_candy_forest()
 
     # underground
     create_mazes()
-    create_mobs()
 
     #######################################
     #            Main game loop           #
@@ -62,8 +62,6 @@ def main():
     # move player to the initial position
     # TODO set init pos
     Global.mc.player.setTilePos(100, 100, 100)
-    Global.escape = False
-    Global.end_game = False
 
     # loop
     while not Global.end_game:

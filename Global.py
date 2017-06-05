@@ -1,4 +1,5 @@
 from mcpi import minecraft
+from mcpi.block import *
 
 ######################################
 #         Important variables        #
@@ -33,10 +34,18 @@ D = 4
 x_surround = [1, 1, 1, 0, -1, -1, -1, 0]
 z_surround = [-1, 0, 1, 1, 1, 0, -1, -1]
 
+# a list to save block color
+# TODO this list
+color = [
+    WOOL_WHITE,
+    WOOL_ORANGE,
+]
+
 
 ######################################
 #              Functions             #
 ######################################
+
 
 def update_position():
     global hansel, pos, tilePos
