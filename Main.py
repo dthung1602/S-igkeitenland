@@ -17,7 +17,6 @@
 
 import RPi.GPIO as GPIO
 
-import Global
 from World import *
 
 
@@ -66,7 +65,8 @@ def main():
     # loop
     while not Global.end_game:
         # update info
-        Global.update_position()
+        Global.pos = Global.hansel.getPos()
+        Global.tilePos = Global.hansel.getTilePos()
 
         # check triggers
         for trig in Global.triggers:

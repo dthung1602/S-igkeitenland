@@ -23,7 +23,7 @@ def create_ground():
     """clear sky and create ground"""
 
     # ground
-    mc.setBlocks(127, Global.ground_height, 127, -128, -64, -128, 1)
+    mc.setBlocks(127, Global.ground_height, 127, -128, -64, -128, 2)
 
     # air
     mc.setBlocks(127, 63, 127, -128, Global.ground_height, -128, 0)
@@ -159,7 +159,6 @@ def create_corn_candy_mountains():
         i += 1
 
 
-# TODO create river
 def create_river():
     """create a chocolate river"""
 
@@ -458,12 +457,14 @@ def create_mazes():
     # coordinate of first block of lowest floor of the maze
     # depend on position of FallIntoMaze trap - triggers[0]
     x = Global.triggers[0].pos.x - 3
-    y = Global.triggers[0].depth - 4
+    y = Global.triggers[0].depth - 10
     z = Global.triggers[0].pos.z + 11
 
     # create mazes
     for i in xrange(1, 1 + Global.number_of_floor):
         create_maze_floor(i, x, y + (i - 1) * (Global.floor_height + 4), z)
+
+        # cover teh
 
 
 # test

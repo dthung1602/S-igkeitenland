@@ -40,14 +40,3 @@ color = [
     WOOL_WHITE,
     WOOL_ORANGE,
 ]
-
-
-######################################
-#              Functions             #
-######################################
-
-
-def update_position():
-    global hansel, pos, tilePos
-    pos = hansel.getPos
-    tilePos = hansel.getTilePos

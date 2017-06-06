@@ -52,6 +52,9 @@ class TriggerComeClose(object):
         # add self to triggers list
         Global.triggers.append(self)
 
+        # set block under trigger block to correct type
+        Global.mc.setBlock(x, y, z, self.block)
+
     def distance(self):
         return (self.pos - Global.pos).length()
 
@@ -119,7 +122,7 @@ class Riddle(TriggerComeClose):
         Global.mc.postToChat("Wrong!")
         for x in Global.x_surround:
             for z in Global.z_surround:
-                choice(trap.keys())
+                choice(traps.keys())
                 FallIntoLavaTrap(Global.pos.x + x, Global.pos.y, Global.pos.z + z)
 
     def right(self):
@@ -191,22 +194,23 @@ class FallIntoLavaTrap(FallTrap):
 
 class PushBackTrap(TriggerComeClose):
     def __init__(self, x, y, z):
-        TriggerComeClose.__init__(self, x, y, z, 5, STONE.id, 0, False)
+        TriggerComeClose.__init__(self, x, y, z, 4, WOOL_ORANGE.id, 0, False)
         self.old_pos = None
 
     @staticmethod
     def move_player(vec3):
-        new_pos = vec3 + Global.pos
+        new_pos = vec3 + Global.hansel.getPos()
         Global.hansel.setPos(new_pos.x, new_pos.y, new_pos.z)
-        sleep(0.1)
+        sleep(0.01)
 
     def action(self):
-        if self.distance() > self.d / 3:
+        if self.old_pos is None and self.distance() > self.d / 2:
             self.old_pos = Global.pos
         else:
             step = self.old_pos - Global.pos
-            for i in xrange(20):
+            for i in xrange(10):
                 self.move_player(step)
+            self.old_pos = None
 
 
 class FlowLavaBlockWayX(TriggerStepOn):
@@ -282,7 +286,8 @@ class FallSand(TriggerStepOn):
         TriggerStepOn.__init__(self, x, y, z, STONE.id, 0, True)
 
     def action(self):
-        Global.mc.setBlock(Global.pos.x, Global.pos.y + 3, Global.pos.z, SAND)
+        Global.mc.setBlocks(Global.pos.x - 5, Global.pos.y + 4, Global.pos.z - 5,
+                            Global.pos.x + 5, Global.pos.y + 4, Global.pos.z + 5, SAND)
 
 
 class TrapInHoleX(TriggerStepOn):
@@ -295,11 +300,10 @@ class TrapInHoleX(TriggerStepOn):
         x = Global.pos.x
         y = Global.pos.y
         z = Global.pos.z
-        Global.mc.setBlocks(x, y - 1, z, x + 5, y - 3, z, AIR)
+        Global.mc.setBlocks(x - 5, y - 1, z, x + 5, y - 3, z, AIR)
         sleep(2)
-        for i in xrange(6):
-            Global.mc.setBlock(x, y - 1, z, 89)
-            x += 1
+        for i in xrange(-5, 6):
+            Global.mc.setBlock(x + i, y - 1, z, 89)
             sleep(1)
 
 
@@ -313,12 +317,14 @@ class TrapInHoleZ(TriggerStepOn):
         x = Global.pos.x
         y = Global.pos.y
         z = Global.pos.z
-        Global.mc.setBlocks(x, y - 1, z, x, y - 3, z + 5, AIR)
+        Global.mc.setBlocks(x, y - 1, z - 5, x, y - 3, z + 5, AIR)
         sleep(2)
-        for i in xrange(6):
-            Global.mc.setBlock(x, y - 1, z, 89)
-            z += 1
+        for i in xrange(-5, 6):
+            Global.mc.setBlock(x, y - 1, z + i, 89)
             sleep(1)
+
+
+class GoOutOfMaze(TriggerStepOn):
 
 
 ###################################################################################
@@ -326,9 +332,9 @@ class TrapInHoleZ(TriggerStepOn):
 ###################################################################################
 
 class FinalTrap(TriggerComeClose):
-    def __init__(self):
+    def __init__(self, x, y, z):
         # TODO choose pos
-        TriggerComeClose.__init__(self, 10, 10, 10, 5, AIR)
+        TriggerComeClose.__init__(self, x, y, z, 5, GOLD_BLOCK)
 
     def condition(self):
         return Global.escape and self.distance() < self.d
@@ -337,34 +343,41 @@ class FinalTrap(TriggerComeClose):
         # end python program
         Global.end_game = True
 
+        length = 30
+        depth = 7
+
         # build the wall of the hole
-        Global.mc.setBlocks(Global.tilePos.x - 10, Global.tilePos.y - 5, Global.tilePos.z - 10,
-                            Global.tilePos.x + 10, Global.tilePos.y - 1, Global.tilePos.z + 10, STONE_BRICK)
+        Global.mc.setBlocks(Global.tilePos.x - 10, Global.tilePos.y - depth, Global.tilePos.z - 10,
+                            Global.tilePos.x + length, Global.tilePos.y - 1, Global.tilePos.z + 10, STONE_BRICK)
 
         # fill air
-        Global.mc.setBlocks(Global.tilePos.x - 9, Global.tilePos.y - -5, Global.tilePos.z - 9,
-                            Global.tilePos.x + 9, Global.tilePos.y - 1, Global.tilePos.z + 9, AIR)
+        Global.mc.setBlocks(Global.tilePos.x - 9, Global.tilePos.y - depth, Global.tilePos.z - 9,
+                            Global.tilePos.x + length - 1, Global.tilePos.y - 1, Global.tilePos.z + 9, AIR)
+
+        Global.mc.setBlocks(Global.tilePos.x - 9, Global.tilePos.y, Global.tilePos.z - 9,
+                            Global.tilePos.x + length - 1, Global.tilePos.y + 8, Global.tilePos.z + 9, AIR)
 
         # fill lava
-        Global.mc.setBlocks(Global.tilePos.x - 10, Global.tilePos.y - 10, Global.tilePos.z - 10,
-                            Global.tilePos.x + 10, Global.tilePos.y - 5, Global.tilePos.z + 10, LAVA)
+        Global.mc.setBlocks(Global.tilePos.x - 9, Global.tilePos.y - depth - 2, Global.tilePos.z - 10,
+                            Global.tilePos.x + length + 10, Global.tilePos.y - depth, Global.tilePos.z + 10, LAVA)
 
         # make a bridge
-        Global.mc.setBlocks(Global.tilePos.x, Global.tilePos.y - 1, Global.tilePos.z,
-                            Global.tilePos.x + 8, Global.tilePos.y - 1, Global.tilePos.z, GRASS)
+        Global.mc.setBlocks(Global.tilePos.x - 3, Global.tilePos.y - 1, Global.tilePos.z,
+                            Global.tilePos.x + length - 3, Global.tilePos.y - 1, Global.tilePos.z, GRASS)
 
         # show message and wait for player to read
         Global.mc.postToChat("Valar Morghulis\nYou should run now.")
-        sleep(2)
+        sleep(3)
 
         # start destroying the bridge. if player jump to land then make a hole
-        hole = Vec3(Global.tilePos.x + 11, Global.tilePos.y, Global.tilePos.z)
+        hole = Vec3(Global.tilePos.x + length + 1, Global.tilePos.y, Global.tilePos.z)
         t = time()
+        delay = 0.5
         count = 0
 
-        while Global.mc.player.getTilePos() != hole and count < 10:
-            if time() - t > 500:
-                Global.mc.setBlock(Global.tilePos.x + count, Global.tilePos.y - 1, Global.tilePos.z, SAND)
+        while Global.mc.player.getTilePos() != hole and count < length - 5:
+            if time() - t > delay:
+                Global.mc.setBlock(Global.tilePos.x - 3 + count, Global.tilePos.y - 1, Global.tilePos.z, SAND)
                 count += 1
                 t = time()
 
@@ -382,4 +395,39 @@ trap = {
     'g': FallSand,
     'h': TrapInHoleX,
     'I': TrapInHoleZ,
+
 }
+
+# test
+if __name__ == '__main__':
+    x, y, z = Global.tilePos
+    y -= 1
+    # FallTrap(x, y, z + 3, 5, BRICK_BLOCK)
+    # FallIntoLavaTrap(x + 3, y, z)
+    # PushBackTrap(x - 3, y + 1, z - 5)
+    # Riddle(x - 6, y + 1, z + 5)
+    # FlowLavaBlockWayX(x + 6, y, z)
+    # FlowLavaBlockWayZ(x, y, z + 6)
+    # StoneBlockWayX(x + 6, y, z)
+    # StoneBlockWayZ(x, y, z + 6)
+    # FallSand(x, y, z + 5)
+    # TrapInHoleX(x + 5, y, z)
+    # TrapInHoleZ(x, y, z + 5)
+    Global.escape = True
+    f = FinalTrap(x + 10, y + 1, z)
+
+    while len(Global.triggers) > 0:
+        # update info
+        Global.pos = Global.hansel.getPos()
+        Global.tilePos = Global.hansel.getTilePos()
+
+        print Global.tilePos, "  **"
+
+        # check triggers
+        for trig in Global.triggers:
+            print trig.pos
+            if trig.condition():
+                trig.action()
+                if trig.one_time:
+                    Global.triggers.remove(trig)
+        print "------------------------------------\n\n"
