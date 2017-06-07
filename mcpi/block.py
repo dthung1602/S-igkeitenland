@@ -93,26 +93,19 @@ FENCE_GATE          = Block(107)
 GLOWING_OBSIDIAN    = Block(246)
 NETHER_REACTOR_CORE = Block(247)
 
-# WOOL:
-# 0: White
-# 1: Orange
-# 2: Magenta
-# 3: Light Blue
-# 4: Yellow
-# 5: Lime
-# 6: Pink
-# 7: Grey
-# 8: Light grey
-# 9: Cyan
-# 10: Purple
-# 11: Blue
-# 12: Brown
-# 13: Green
-# 14: Red
-# 15:Black
-
-# TODO wool color
 WOOL_WHITE = Block(35, 0)
 WOOL_ORANGE = Block(35, 1)
-WOOL_RED = Block(35, 14)
+WOOL_MAGENTA = Block(35,2)
+WOOL_LIGHT_BLUE = Block(35, 3)
+WOOL_YELLOW = Block(35, 4)
+WOOL_LIME = Block(35, 5)
+WOOL_PINK = Block(35, 6)
+WOOL_GREY = Block(35, 7)
+WOOL_LIGHT_GREY = Block(35, 8)
+WOOL_CYAN = Block(35, 9)
+WOOL_PURPLE = Block(35, 10)
+WOOL_BLUE = Block(35, 11)
 WOOL_BROWN = Block(35, 12)
+WOOL_GREEN = Block(35, 13)
+WOOL_RED = Block(35, 14)
+WOOL_BLACK = Block(35, 15)

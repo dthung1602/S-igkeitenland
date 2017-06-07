@@ -35,8 +35,21 @@ x_surround = [1, 1, 1, 0, -1, -1, -1, 0]
 z_surround = [-1, 0, 1, 1, 1, 0, -1, -1]
 
 # a list to save block color
-# TODO this list
 color = [
     WOOL_WHITE,
     WOOL_ORANGE,
+    WOOL_MAGENTA,
+    WOOL_LIGHT_BLUE,
+    WOOL_YELLOW,
+    WOOL_LIME,
+    WOOL_PINK,
+    WOOL_GREY,
+    WOOL_LIGHT_GREY,
+    WOOL_CYAN,
+    WOOL_PURPLE,
+    WOOL_BLUE,
+    WOOL_BROWN,
+    WOOL_GREEN,
+    WOOL_RED,
+    WOOL_BLACK,
 ]

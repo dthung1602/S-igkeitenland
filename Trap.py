@@ -5,6 +5,7 @@ from time import *
 
 import RPi.GPIO as GPIO
 
+from Draw import draw_sphere
 import Global
 from mcpi.block import *
 from mcpi.vec3 import *
@@ -122,7 +123,7 @@ class Riddle(TriggerComeClose):
         Global.mc.postToChat("Wrong!")
         for x in Global.x_surround:
             for z in Global.z_surround:
-                choice(traps.keys())
+                choice(trap.keys())
                 FallIntoLavaTrap(Global.pos.x + x, Global.pos.y, Global.pos.z + z)
 
     def right(self):
@@ -171,7 +172,7 @@ class FallIntoMazeTrap(FallTrap):
     will fall into the lowest level of the maze"""
 
     def __init__(self, x, y, z):
-        FallTrap.__init__(self, x, y, z, (Global.floor_height + 4) * Global.number_of_floor, STONE.id, 0, True)
+        FallTrap.__init__(self, x, y, z, (Global.floor_height + 4) * (Global.number_of_floor + 2), STONE.id, 0, True)
 
         # create a chamber at the end of the hole
         Global.mc.setBlocks(Global.pos.x - 5, self.depth, Global.pos.z - 5,
@@ -324,7 +325,35 @@ class TrapInHoleZ(TriggerStepOn):
             sleep(1)
 
 
-class GoOutOfMaze(TriggerStepOn):
+class GoOutOfMaze(TriggerComeClose):
+    def __init__(self, x, y, z):
+        TriggerComeClose.__init__(self, x, y, z, 7, GLASS)
+
+    def action(self):
+        Global.escape = True
+        x, y, z = self.pos
+
+        # open the way out
+        while y < Global.ground_height:
+            Global.mc.setBlock(x, y, z, STAIRS_COBBLESTONE, 1)
+            Global.mc.setBlocks(x, y + 1, z, x, y + 3, z, AIR)
+            y += 1
+            x += 1
+
+        # build path lead to final trap
+        Global.mc.setBlocks(x - 5, y, z - 1, x - 4, y + 8, z + 1, GLASS)
+        Global.mc.setBlocks(x - 5, y, z - 1, x + 15, y + 8, z - 1, GLASS)
+        Global.mc.setBlocks(x - 5, y, z + 1, x + 15, y + 8, z + 1, GLASS)
+
+        # room to contain final trap
+        Global.mc.setBlocks(x + 15, y, z - 5, x + 25, y + 8, z + 5, GLASS)
+        Global.mc.setBlocks(x + 16, y, z - 4, x + 24, y + 8, z + 4, AIR)
+        Global.mc.setBlocks(x + 15, y, z, x + 24, y + 8, z, AIR)
+
+        # add final trap
+        draw_sphere(x + 20, y + 3, z, 3, GOLD_BLOCK)
+        # f = FinalTrap(x + 20, y + 1, z)
+        # f.action()
 
 
 ###################################################################################
@@ -333,7 +362,6 @@ class GoOutOfMaze(TriggerStepOn):
 
 class FinalTrap(TriggerComeClose):
     def __init__(self, x, y, z):
-        # TODO choose pos
         TriggerComeClose.__init__(self, x, y, z, 5, GOLD_BLOCK)
 
     def condition(self):
