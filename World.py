@@ -475,6 +475,7 @@ def create_mazes():
 
 # test
 if __name__ == "__main__":
+    pass
     # surface
     # print "start"
     # create_ground()
@@ -491,14 +492,14 @@ if __name__ == "__main__":
     # print "oreo"
     # create_cupcake_village()
     # print "cupcake"
-    create_coke_tower()
-    # print "coke"
-    # create_forest()
-    # print "forest"
-    create_lollipop_forest()
-    print "lollipop"
-    create_cane_candy_forest()
-    print "cane"
+    # create_coke_tower()
+    # # print "coke"
+    # # create_forest()
+    # # print "forest"
+    # create_lollipop_forest()
+    # print "lollipop"
+    # create_cane_candy_forest()
+    # print "cane"
 
     # underground
     # FallIntoMazeTrap(0, 0, 0)
