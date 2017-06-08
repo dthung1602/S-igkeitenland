@@ -51,5 +51,4 @@ color = [
     WOOL_BROWN,
     WOOL_GREEN,
     WOOL_RED,
-    WOOL_BLACK,
 ]

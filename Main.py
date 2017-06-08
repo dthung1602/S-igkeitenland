@@ -38,18 +38,22 @@ def main():
     #             Create world            #
     #######################################
 
-    # surface
+    # terrance
     create_ground()
     create_craggy_mountains()
-    create_corn_candy_mountains()
     create_river()
+    create_corn_candy_mountains()
     create_ice_cream_hills()
     create_oreos()
-    create_cupcake_village()
-    create_coke_tower()
+
+    # forests
     create_forest()
     create_lollipop_forest()
     create_cane_candy_forest()
+
+    # buildings
+    create_cupcake_village()
+    create_coke_tower()
 
     # underground
     create_mazes()

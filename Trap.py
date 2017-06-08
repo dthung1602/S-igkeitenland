@@ -175,14 +175,14 @@ class FallIntoMazeTrap(FallTrap):
         FallTrap.__init__(self, x, y, z, (Global.floor_height + 4) * (Global.number_of_floor + 2), STONE.id, 0, True)
 
         # create a chamber at the end of the hole
-        Global.mc.setBlocks(Global.pos.x - 5, self.depth, Global.pos.z - 5,
-                            Global.pos.x + 5, self.depth - 5, Global.pos.z + 5, AIR)
+        Global.mc.setBlocks(x - 5, self.depth, z - 5,
+                            x + 5, self.depth - 5, z + 5, AIR)
 
         # create water in the chamber to catch hansel
-        Global.mc.setBlocks(Global.pos.x - 6, self.depth - 6, Global.pos.z - 6,
-                            Global.pos.x + 5, self.depth - 12, Global.pos.z + 6, GLOWSTONE_BLOCK)
-        Global.mc.setBlocks(Global.pos.x - 5, self.depth - 5, Global.pos.z - 5,
-                            Global.pos.x + 5, self.depth - 12, Global.pos.z + 5, WATER)
+        Global.mc.setBlocks(x - 6, self.depth - 6, z - 6,
+                            x + 6, self.depth - 12, z + 6, GLOWSTONE_BLOCK)
+        Global.mc.setBlocks(x - 5, self.depth - 5, z - 5,
+                            x + 5, self.depth - 12, z + 5, WATER)
 
 
 class FallIntoLavaTrap(FallTrap):
@@ -333,26 +333,28 @@ class GoOutOfMaze(TriggerComeClose):
         Global.escape = True
         x, y, z = self.pos
 
-        # open the way out
+        # connect to stairs in maze
+        Global.mc.setBlocks(x - 1, y, z, x - 1, y + 3, z, AIR)
+
+        # build stairs
         while y < Global.ground_height:
             Global.mc.setBlock(x, y, z, STAIRS_COBBLESTONE, 1)
             Global.mc.setBlocks(x, y + 1, z, x, y + 3, z, AIR)
+            Global.mc.setBlock(x, y + 4, z, GLASS)
+            sleep(0.05)
             y += 1
             x += 1
 
         # build path lead to final trap
-        Global.mc.setBlocks(x - 5, y, z - 1, x - 4, y + 8, z + 1, GLASS)
-        Global.mc.setBlocks(x - 5, y, z - 1, x + 15, y + 8, z - 1, GLASS)
-        Global.mc.setBlocks(x - 5, y, z + 1, x + 15, y + 8, z + 1, GLASS)
-
-        # room to contain final trap
-        Global.mc.setBlocks(x + 15, y, z - 5, x + 25, y + 8, z + 5, GLASS)
-        Global.mc.setBlocks(x + 16, y, z - 4, x + 24, y + 8, z + 4, AIR)
-        Global.mc.setBlocks(x + 15, y, z, x + 24, y + 8, z, AIR)
+        Global.mc.setBlock(x, y - 1, z, GOLD_BLOCK)
+        Global.mc.setBlocks(x - 12, y - 8, z - 1, x + 20, y + 8, z - 1, GLASS)
+        Global.mc.setBlocks(x - 12, y - 8, z + 1, x + 20, y + 8, z + 1, GLASS)
+        Global.mc.setBlocks(x - 11, y, z, x + 20, y + 8, z, AIR)
+        Global.mc.setBlocks(x - 12, y - 8, z - 1, x - 12, y + 8, z + 1, GLASS)
 
         # add final trap
-        draw_sphere(x + 20, y + 3, z, 3, GOLD_BLOCK)
-        # f = FinalTrap(x + 20, y + 1, z)
+        draw_sphere(x + 26, y + 5, z, 3, REDSTONE_ORE)
+        # f = FinalTrap(x + 11, y + 5, z)
         # f.action()
 
 
@@ -383,7 +385,7 @@ class FinalTrap(TriggerComeClose):
                             Global.tilePos.x + length - 1, Global.tilePos.y - 1, Global.tilePos.z + 9, AIR)
 
         Global.mc.setBlocks(Global.tilePos.x - 9, Global.tilePos.y, Global.tilePos.z - 9,
-                            Global.tilePos.x + length - 1, Global.tilePos.y + 8, Global.tilePos.z + 9, AIR)
+                            Global.tilePos.x + length - 1, Global.tilePos.y + 50, Global.tilePos.z + 9, AIR)
 
         # fill lava
         Global.mc.setBlocks(Global.tilePos.x - 9, Global.tilePos.y - depth - 2, Global.tilePos.z - 10,
