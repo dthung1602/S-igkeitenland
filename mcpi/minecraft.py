@@ -24,6 +24,7 @@ def intFloor(*args):
 
 class CmdPositioner:
     """Methods for setting and getting positions"""
+
     def __init__(self, connection, packagePrefix):
         self.conn = connection
         self.pkg = packagePrefix
@@ -53,24 +54,30 @@ class CmdPositioner:
 
 class CmdEntity(CmdPositioner):
     """Methods for entities"""
+
     def __init__(self, connection):
         CmdPositioner.__init__(self, connection, "entity")
 
 
 class CmdPlayer(CmdPositioner):
     """Methods for the host (Raspberry Pi) player"""
+
     def __init__(self, connection):
         CmdPositioner.__init__(self, connection, "player")
         self.conn = connection
 
     def getPos(self):
         return CmdPositioner.getPos(self, [])
+
     def setPos(self, *args):
         return CmdPositioner.setPos(self, [], args)
+
     def getTilePos(self):
         return CmdPositioner.getTilePos(self, [])
+
     def setTilePos(self, *args):
         return CmdPositioner.setTilePos(self, [], args)
+
 
 class CmdCamera:
     def __init__(self, connection):
@@ -95,6 +102,7 @@ class CmdCamera:
 
 class CmdEvents:
     """Events"""
+
     def __init__(self, connection):
         self.conn = connection
 
@@ -111,6 +119,7 @@ class CmdEvents:
 
 class Minecraft:
     """The main class to interact with a running instance of Minecraft Pi."""
+
     def __init__(self, connection):
         self.conn = connection
 
@@ -127,9 +136,11 @@ class Minecraft:
         """Get block with data (x,y,z) => Block"""
         ans = self.conn.sendReceive("world.getBlockWithData", intFloor(args))
         return Block(*map(int, ans.split(",")))
+
     """
         @TODO
     """
+
     def getBlocks(self, *args):
         """Get a cuboid of blocks (x0,y0,z0,x1,y1,z1) => [id:int]"""
         return int(self.conn.sendReceive("world.getBlocks", intFloor(args)))
@@ -168,7 +179,7 @@ class Minecraft:
         self.conn.send("world.setting", setting, 1 if bool(status) else 0)
 
     @staticmethod
-    def create(address = "localhost", port = 4711):
+    def create(address="localhost", port=4711):
         return Minecraft(Connection(address, port))
 
 

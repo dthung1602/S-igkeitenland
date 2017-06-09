@@ -1,3 +1,7 @@
+"""
+    This file contains shared variables and constants
+"""
+
 from mcpi import minecraft
 from mcpi.block import *
 
@@ -30,7 +34,7 @@ B = 2
 C = 3
 D = 4
 
-# list to loop through surrounding blocks of player
+# list to loop through 8 surrounding blocks of player
 x_surround = [1, 1, 1, 0, -1, -1, -1, 0]
 z_surround = [-1, 0, 1, 1, 1, 0, -1, -1]
 
@@ -43,7 +47,6 @@ color = [
     WOOL_YELLOW,
     WOOL_LIME,
     WOOL_PINK,
-    WOOL_GREY,
     WOOL_LIGHT_GREY,
     WOOL_CYAN,
     WOOL_PURPLE,

@@ -1,12 +1,16 @@
-# coding=utf-8
+#!/usr/bin/env python
+
+"""
+    This file contains definitions of all traps in the maze
+"""
 
 from random import choice
 from time import *
 
 import RPi.GPIO as GPIO
 
-from Draw import draw_sphere
 import Global
+from Draw import draw_sphere
 from mcpi.block import *
 from mcpi.vec3 import *
 
@@ -93,7 +97,12 @@ class Riddle(TriggerComeClose):
         TriggerComeClose.__init__(self, x, y, z, 3, STONE.id, STONE.data, False)
 
         # load riddle from file
-        f = open("./data/riddle/riddle" + str(Riddle.riddle_num) + ".txt", "r")
+        try:
+            f = open("./data/riddle/riddle" + str(Riddle.riddle_num) + ".txt", "r")
+        except IOError:
+            print "Data of riddle %d can not be loaded" % Riddle.riddle_num
+            return
+
         Riddle.riddle_num = Riddle.riddle_num + 1 if Riddle.riddle_num < Riddle.number_of_riddle - 1 else 0
 
         # set values
@@ -166,7 +175,7 @@ class FallTrap(TriggerStepOn):
     def action(self):
         Global.mc.setBlock(Global.tilePos.x, Global.tilePos.y - 1, Global.tilePos.z, AIR)
 
-
+# TODO remove
 class FallIntoMazeTrap(FallTrap):
     """This will open a hole under Hansel and he 
     will fall into the lowest level of the maze"""
@@ -189,7 +198,7 @@ class FallIntoLavaTrap(FallTrap):
     """player fall into lava"""
 
     def __init__(self, x, y, z):
-        FallTrap.__init__(self, x, y, z, 3, STONE.id, 0, True)
+        FallTrap.__init__(self, x, y, z, 2, STONE.id, 0, True)
         Global.mc.setBlock(x, self.depth, z, LAVA)
 
 
@@ -325,16 +334,15 @@ class TrapInHoleZ(TriggerStepOn):
             sleep(1)
 
 
-class GoOutOfMaze(TriggerComeClose):
+class GoOutOfMaze(TriggerStepOn):
     def __init__(self, x, y, z):
-        TriggerComeClose.__init__(self, x, y, z, 7, GLASS)
+        TriggerStepOn.__init__(self, x, y, z, GLASS, one_time=False)
+        Global.mc.setBlocks(x, y + 1, z, x, y + 5, z, AIR)
 
     def action(self):
         Global.escape = True
         x, y, z = self.pos
-
-        # connect to stairs in maze
-        Global.mc.setBlocks(x - 1, y, z, x - 1, y + 3, z, AIR)
+        x += 1
 
         # build stairs
         while y < Global.ground_height:
@@ -346,16 +354,16 @@ class GoOutOfMaze(TriggerComeClose):
             x += 1
 
         # build path lead to final trap
-        Global.mc.setBlock(x, y - 1, z, GOLD_BLOCK)
-        Global.mc.setBlocks(x - 12, y - 8, z - 1, x + 20, y + 8, z - 1, GLASS)
-        Global.mc.setBlocks(x - 12, y - 8, z + 1, x + 20, y + 8, z + 1, GLASS)
-        Global.mc.setBlocks(x - 11, y, z, x + 20, y + 8, z, AIR)
-        Global.mc.setBlocks(x - 12, y - 8, z - 1, x - 12, y + 8, z + 1, GLASS)
+        Global.mc.setBlocks(x - 12, y - 8, z - 1, x + 20, y + 8, z - 1, GLASS)  # wall on the left
+        Global.mc.setBlocks(x - 12, y - 8, z + 1, x + 20, y + 8, z + 1, GLASS)  # wall on the right
+        Global.mc.setBlocks(x - 11, y, z, x + 20, y + 8, z, AIR)                # air between
+        Global.mc.setBlocks(x, y - 1, z, x + 20, y - 1, z, GOLD_BLOCK)     # block to walk on
+        Global.mc.setBlocks(x - 12, y - 8, z - 1, x - 12, y + 8, z + 1, GLASS)  # wall at the back
 
         # add final trap
+        Global.triggers = []
         draw_sphere(x + 26, y + 5, z, 3, REDSTONE_ORE)
-        # f = FinalTrap(x + 11, y + 5, z)
-        # f.action()
+        FinalTrap(x + 26, y + 5, z)
 
 
 ###################################################################################
@@ -364,7 +372,7 @@ class GoOutOfMaze(TriggerComeClose):
 
 class FinalTrap(TriggerComeClose):
     def __init__(self, x, y, z):
-        TriggerComeClose.__init__(self, x, y, z, 5, GOLD_BLOCK)
+        TriggerComeClose.__init__(self, x, y, z, 7, GOLD_BLOCK)
 
     def condition(self):
         return Global.escape and self.distance() < self.d
@@ -396,7 +404,7 @@ class FinalTrap(TriggerComeClose):
                             Global.tilePos.x + length - 3, Global.tilePos.y - 1, Global.tilePos.z, GRASS)
 
         # show message and wait for player to read
-        Global.mc.postToChat("Valar Morghulis\nYou should run now.")
+        Global.mc.postToChat("You have been told NOT to enter the Coke tower. Now you must pay. RUN")
         sleep(3)
 
         # start destroying the bridge. if player jump to land then make a hole
@@ -405,9 +413,11 @@ class FinalTrap(TriggerComeClose):
         delay = 0.5
         count = 0
 
-        while Global.mc.player.getTilePos() != hole and count < length - 5:
+        while Global.mc.player.getTilePos() != hole and count < length - 2:
             if time() - t > delay:
                 Global.mc.setBlock(Global.tilePos.x - 3 + count, Global.tilePos.y - 1, Global.tilePos.z, SAND)
+                if count > 5:
+                    Global.mc.setBlock(Global.tilePos.x - 3 + count - 5, Global.tilePos.y - depth, Global.tilePos.z, AIR)
                 count += 1
                 t = time()
 
@@ -425,24 +435,24 @@ trap = {
     'g': FallSand,
     'h': TrapInHoleX,
     'I': TrapInHoleZ,
-
+    'j': GoOutOfMaze,
 }
 
 # test
 if __name__ == '__main__':
     x, y, z = Global.tilePos
     y -= 1
-    # FallTrap(x, y, z + 3, 5, BRICK_BLOCK)
-    # FallIntoLavaTrap(x + 3, y, z)
-    # PushBackTrap(x - 3, y + 1, z - 5)
-    # Riddle(x - 6, y + 1, z + 5)
-    # FlowLavaBlockWayX(x + 6, y, z)
-    # FlowLavaBlockWayZ(x, y, z + 6)
-    # StoneBlockWayX(x + 6, y, z)
-    # StoneBlockWayZ(x, y, z + 6)
-    # FallSand(x, y, z + 5)
-    # TrapInHoleX(x + 5, y, z)
-    # TrapInHoleZ(x, y, z + 5)
+    FallTrap(x, y, z + 3, 5, BRICK_BLOCK)
+    FallIntoLavaTrap(x + 3, y, z)
+    PushBackTrap(x - 3, y + 1, z - 5)
+    Riddle(x - 6, y + 1, z + 5)
+    FlowLavaBlockWayX(x + 6, y, z)
+    FlowLavaBlockWayZ(x, y, z + 6)
+    StoneBlockWayX(x + 6, y, z)
+    StoneBlockWayZ(x, y, z + 6)
+    FallSand(x, y, z + 5)
+    TrapInHoleX(x + 5, y, z)
+    TrapInHoleZ(x, y, z + 5)
     Global.escape = True
     f = FinalTrap(x + 10, y + 1, z)
 
