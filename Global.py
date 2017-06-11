@@ -23,16 +23,16 @@ end_game = False
 #              Constants             #
 ######################################
 
-ground_height = 0
+GROUND_HEIGHT = 0
 
-floor_height = 6
-number_of_floor = 3
+FLOOR_HEIGHT = 6
+NUMBER_OF_FLOOR = 3
 
 # buttons
-A = 1
-B = 2
-C = 3
-D = 4
+A = 18
+B = 23
+C = 24
+D = 25
 
 # list to loop through 8 surrounding blocks of player
 x_surround = [1, 1, 1, 0, -1, -1, -1, 0]

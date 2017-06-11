@@ -24,10 +24,10 @@ def clear_world():
     """clear sky and create ground"""
 
     # ground
-    mc.setBlocks(127, Global.ground_height, 127, -128, -64, -128, GOLD_BLOCK)
+    mc.setBlocks(127, Global.GROUND_HEIGHT, 127, -128, -64, -128, GOLD_BLOCK)
 
     # air
-    mc.setBlocks(127, 63, 127, -128, Global.ground_height, -128, 0)
+    mc.setBlocks(127, 63, 127, -128, Global.GROUND_HEIGHT, -128, 0)
 
 
 def create_craggy_mountains():
@@ -37,7 +37,7 @@ def create_craggy_mountains():
         """make sure val in its range"""
         return min(max_val, max(min_val, val))
 
-    y = Global.ground_height
+    y = Global.GROUND_HEIGHT
     mountain_width = 10
     max_init_height = 3
     min_init_height = 1
@@ -101,7 +101,7 @@ def create_river():
         x = x0 + line.find('#')
 
         # fill water up to ground height
-        y = Global.ground_height - 1
+        y = Global.GROUND_HEIGHT - 1
 
         # create
         for i in xrange(2):
@@ -142,7 +142,7 @@ def create_corn_mountain(x, y, z, h, r):
 def create_corn_candy_mountains():
     """ create a forest at the south of the map"""
     i = 0
-    y = Global.ground_height - 7
+    y = Global.GROUND_HEIGHT - 7
     x = [-82, -62, -55, -65, -40, -38, -98]
     z = [-77, -73, -48, -26, -100, -5, -120]
     while i < len(x):
@@ -155,7 +155,7 @@ def create_corn_candy_mountains():
 def create_ice_cream_hills():
     """create ice cream hills at the west of the map"""
     i = 0
-    y = Global.ground_height
+    y = Global.GROUND_HEIGHT
     x = [-85, -60, -48, -11]
     z = [83, 65, 43, 25]
     c = [WOOL_LIME, WOOL_BROWN, WOOL_GREEN, WOOL_PURPLE]
@@ -190,7 +190,7 @@ def create_oreos():
     while i < len(x):
         radius = randint(8, 16)
         width = randint(2, 4)
-        create_oreo(x[i], Global.ground_height + y[i], z[i], radius, width)
+        create_oreo(x[i], Global.GROUND_HEIGHT + y[i], z[i], radius, width)
         i += 1
 
 
@@ -244,7 +244,7 @@ def create_tree(x, y, z):
 def create_forest():
     """ create a forest at the south of the map"""
     i = 0
-    y = Global.ground_height
+    y = Global.GROUND_HEIGHT
 
     # create trees
     while i < 125:
@@ -282,7 +282,7 @@ def create_lollipop(x, y, z):
 def create_lollipop_forest():
     """create a lollipop forest at the south of the map"""
     i = 0
-    y = Global.ground_height
+    y = Global.GROUND_HEIGHT
     while i < 100:
         x = randint(-120, 120)
         z = randint(-10, 90)
@@ -365,8 +365,8 @@ def create_cane_candy_forest():
     while i < 100:
         x = randint(-120, 120)
         z = randint(-120, -20)
-        if mc.getHeight(x, z) == Global.ground_height:
-            y = Global.ground_height + randint(-6, 0)
+        if mc.getHeight(x, z) == Global.GROUND_HEIGHT:
+            y = Global.GROUND_HEIGHT + randint(-6, 0)
             create_cane_candy(x, y, z, choice(direction))
             i += 1
 
@@ -403,7 +403,7 @@ def create_cupcake_house(x, y, z, r):
 def create_cupcake_village():
     """create cup cake village in the center of the map"""
     i = 0
-    y = Global.ground_height
+    y = Global.GROUND_HEIGHT
     x = [58, 90, 77, 97, 0, -16, -77, -97, 6]
     z = [22, -70, 38, -11, 56, 73, -14, -33, 0]
     while i < len(x):
@@ -417,7 +417,7 @@ def create_coke_tower():
         create_coke_tower at the north of the village
     """
     x = 30
-    y = Global.ground_height
+    y = Global.GROUND_HEIGHT
     z = -70
 
     # load data from file
@@ -480,7 +480,7 @@ def create_maze_floor(floor, x, y, z):
                 block = AIR
 
             # build
-            mc.setBlocks(x + i, y, z + j, x + i, y + Global.floor_height, z + j, block)
+            mc.setBlocks(x + i, y, z + j, x + i, y + Global.FLOOR_HEIGHT, z + j, block)
 
             # if '*' then create a torch at the highest block
             # if maze_map[i][j] == '*':
@@ -491,13 +491,13 @@ def create_maze_floor(floor, x, y, z):
                 trap[maze_map[i][j]](x + i, y - 1, z + j)
 
     # create maze entrance room
-    mc.setBlocks(x, y, z - 1, x + 7, y + Global.floor_height, z - 7, AIR)
+    mc.setBlocks(x, y, z - 1, x + 7, y + Global.FLOOR_HEIGHT, z - 7, AIR)
 
     # create stairs
-    for i in xrange(Global.floor_height + 4):
-        mc.setBlock(x + 1, y + i, z + Global.floor_height + 3 - i, STAIRS_COBBLESTONE.id, 3)
-        mc.setBlocks(x + 1, y + i + 1, z + Global.floor_height + 3 - i,
-                     x + 1, y + i + 3, z + Global.floor_height + 3 - i, AIR)
+    for i in xrange(Global.FLOOR_HEIGHT + 4):
+        mc.setBlock(x + 1, y + i, z + Global.FLOOR_HEIGHT + 3 - i, STAIRS_COBBLESTONE.id, 3)
+        mc.setBlocks(x + 1, y + i + 1, z + Global.FLOOR_HEIGHT + 3 - i,
+                     x + 1, y + i + 3, z + Global.FLOOR_HEIGHT + 3 - i, AIR)
 
 
 def create_mazes():
@@ -507,7 +507,7 @@ def create_mazes():
 
     # create cupcake house on an island
     x = -20
-    y = Global.ground_height
+    y = Global.GROUND_HEIGHT
     z = -80
     mc.setBlocks(x - 7, y - 9, z - 7, x + 7, y - 1, z + 7, GOLD_BLOCK)
     mc.setBlocks(x - 8, y - 9, z - 8, x + 8, y - 2, z + 8, GOLD_BLOCK)
@@ -518,7 +518,7 @@ def create_mazes():
     mc.setBlocks(x - 1, y, z - 8, x + 1, y - 1, z - 20, GLASS)
 
     # create a hole below the floor
-    depth = y - 1 - (Global.floor_height + 4) * (Global.number_of_floor + 2)
+    depth = y - 1 - (Global.FLOOR_HEIGHT + 4) * (Global.NUMBER_OF_FLOOR + 2)
     mc.setBlocks(x - 1, y - 2, z - 1, x + 1, depth, z + 1, AIR)
 
     # create a chamber at the end of the hole
@@ -538,11 +538,11 @@ def create_mazes():
     z += 11
 
     # create mazes
-    for i in xrange(1, 1 + Global.number_of_floor):
-        create_maze_floor(i, x, y + (i - 1) * (Global.floor_height + 4), z)
+    for i in xrange(1, 1 + Global.NUMBER_OF_FLOOR):
+        create_maze_floor(i, x, y + (i - 1) * (Global.FLOOR_HEIGHT + 4), z)
 
     # create GoOutOfMaze trigger
-    GoOutOfMaze(x + 1, y + Global.number_of_floor * (Global.floor_height + 4) - 1, z - 1)
+    GoOutOfMaze(x + 1, y + Global.NUMBER_OF_FLOOR * (Global.FLOOR_HEIGHT + 4) - 1, z - 1)
 
 
 # test

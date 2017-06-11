@@ -27,7 +27,7 @@ def main():
     #######################################
 
     # # setup GPIO mode
-    # GPIO.setmode(GPIO.BOARD)
+    # GPIO.setmode(GPIO.BCM)
     #
     # # setup pin mode
     # GPIO.setup(Global.A, GPIO.IN)
@@ -58,7 +58,7 @@ def main():
     # create_coke_tower()
 
     # underground
-    # create_mazes()
+    create_mazes()
 
     #######################################
     #            Main game loop           #

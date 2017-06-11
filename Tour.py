@@ -19,7 +19,6 @@ def take_a_tour():
 
     # setup
     global record_delay, init_hansel_pos
-    mc = Global.mc
     hansel = Global.hansel
 
     # move player to init position
@@ -48,23 +47,27 @@ def take_a_tour():
         y = float(y)
         z = float(z)
 
-        # a vector from current position to the new destination
+        # a vector from current position to the new position
         movement = Vec3(x, y, z) - hansel.getPos()
 
-        # a vector from current position to the new destination with the length of 1
-        step = movement / movement.length()
-
-        # change vector's length
-        step *= step_length
+        if movement.length() > 0:
+            # a vector from current position to the new destination with the length of 1
+            step = movement / movement.length()
+            # change vector's length
+            step *= step_length
+        else:
+            # stand still
+            step = Vec3(0, 0, 0)
 
         # move player
-        number_of_steep = int(movement.length() / step_length)
-        play_back_delay = record_delay / number_of_steep
-        for i in xrange(number_of_steep):
+        number_of_step = int(movement.length() / step_length)
+        play_back_delay = record_delay / number_of_step
+        for i in xrange(number_of_step):
             new_pos = hansel.getPos() + step
             hansel.setPos(new_pos.x, new_pos.y, new_pos.z)
             sleep(play_back_delay)
 
+    # by this time the player is already on the trap
     # push player into maze
     x, y, z = hansel.getTilePos()
     mc.setBlocks(x - 1, y, z - 1,
@@ -78,11 +81,11 @@ def take_a_tour():
 def create_a_tour():
     """
         record player position in the world until CTRL_C is pressed
-        create a text file that function take a tour can use to move player around
+        create a text file that function take_a_tour can use to move player around
     """
 
     def signal_handler(*args):
-        """function to save string to file when interrupt signal is received, (CTRL_C is pressed)"""
+        """function to save string to file when interrupt signal is received (CTRL_C is pressed)"""
         # open file to write
         try:
             f = open("data/tour/tour.txt", "w")
@@ -101,7 +104,6 @@ def create_a_tour():
 
     # setup
     global record_delay
-    mc = Global.mc
     hansel = Global.hansel
     signal(SIGINT, signal_handler)
 
