@@ -34,6 +34,7 @@ def main():
     # GPIO.setup(Global.B, GPIO.IN)
     # GPIO.setup(Global.C, GPIO.IN)
     # GPIO.setup(Global.D, GPIO.IN)
+    # GPIO.setup(Global.E, GPIO.IN)
 
     #######################################
     #             Create world            #

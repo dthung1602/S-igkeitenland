@@ -29,10 +29,11 @@ FLOOR_HEIGHT = 6
 NUMBER_OF_FLOOR = 3
 
 # buttons
-A = 18
-B = 23
-C = 24
-D = 25
+A = 3
+B = 5
+C = 7
+D = 11
+E = 13
 
 # list to loop through 8 surrounding blocks of player
 x_surround = [1, 1, 1, 0, -1, -1, -1, 0]

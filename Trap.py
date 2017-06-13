@@ -115,12 +115,6 @@ class Riddle(TriggerComeClose):
     @staticmethod
     def button_pressed():
         """return player's answer"""
-        # print GPIO.input(Global.A)
-        # print GPIO.input(Global.B)
-        # print GPIO.input(Global.C)
-        # print GPIO.input(Global.D)
-        # print "----------------------"
-        # return None
         if not GPIO.input(Global.A):
             return "A"
         if not GPIO.input(Global.B):
@@ -129,6 +123,8 @@ class Riddle(TriggerComeClose):
             return "C"
         if not GPIO.input(Global.D):
             return "D"
+        if not GPIO.input(Global.E):
+            return "E"
         return None
 
     @staticmethod
