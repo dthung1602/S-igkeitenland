@@ -27,22 +27,36 @@ def take_a_tour():
     # open file to read
     try:
         f = open("data/tour/tour.txt", "r")
+        g = open("data/tour/message.txt", "r")
     except IOError:
         print "Data of tour can not be loaded"
         return
 
+    # read messages from g
+    # each line of g: [position to display message]: [message]
+    message = {}  # a dictionary maps a number to a message to display
+    for line in g:
+        data = line.strip().split(": ")
+        pos = int(data[0])
+        mes = data[1]
+        message[pos] = mes
+
     # how long each step is
-    step_length = 0.2
+    step_length = 0.1
 
     # move player around the map
+    count = 0
     for line in f:
         # get values from a line of text
         data = line.strip()
-        if data.count(' ') == 3:
-            x, y, z, message = data.split()
-            mc.postToChat(message)
-        else:
-            x, y, z = data.split()
+        x, y, z = data.split()
+
+        # display message
+        if count in message.keys():
+            mc.postToChat(message[count])
+        count += 1
+
+        # convert to number
         x = float(x)
         y = float(y)
         z = float(z)
@@ -61,7 +75,7 @@ def take_a_tour():
 
         # move player
         number_of_step = int(movement.length() / step_length)
-        play_back_delay = record_delay / number_of_step
+        play_back_delay = 0.05 if number_of_step == 0 else record_delay / number_of_step / 2
         for i in xrange(number_of_step):
             new_pos = hansel.getPos() + step
             hansel.setPos(new_pos.x, new_pos.y, new_pos.z)
@@ -74,7 +88,9 @@ def take_a_tour():
                  x + 1, y - 1, z + 1, AIR)
 
     # print message
-    sleep(4)
+    sleep(2)
+    mc.postToChat("It's look like that you have fall into the trap of the evil witch!")
+    sleep(3)
     mc.postToChat("You must solve the maze to get to the ground. There's no other way around")
 
 

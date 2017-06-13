@@ -59,7 +59,7 @@ def main():
     # create_coke_tower()
 
     # underground
-    create_mazes()
+    # create_mazes()
 
     #######################################
     #            Main game loop           #

@@ -6,7 +6,7 @@
 
 from copy import deepcopy
 from math import sqrt
-from random import randint
+from random import randint, choice
 
 from Draw import *
 from Trap import *
