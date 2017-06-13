@@ -15,7 +15,7 @@
                A modified version of it is used to create basic shapes (circle, line, sphere, etc)
 """
 
-# import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 
 from World import *
 from Tour import *
@@ -26,15 +26,15 @@ def main():
     #             Set up GPIO             #
     #######################################
 
-    # # setup GPIO mode
-    # GPIO.setmode(GPIO.BCM)
-    #
-    # # setup pin mode
-    # GPIO.setup(Global.A, GPIO.IN)
-    # GPIO.setup(Global.B, GPIO.IN)
-    # GPIO.setup(Global.C, GPIO.IN)
-    # GPIO.setup(Global.D, GPIO.IN)
-    # GPIO.setup(Global.E, GPIO.IN)
+    # setup GPIO mode
+    GPIO.setmode(GPIO.BCM)
+
+    # setup pin mode
+    GPIO.setup(Global.A, GPIO.IN)
+    GPIO.setup(Global.B, GPIO.IN)
+    GPIO.setup(Global.C, GPIO.IN)
+    GPIO.setup(Global.D, GPIO.IN)
+    GPIO.setup(Global.E, GPIO.IN)
 
     #######################################
     #             Create world            #
@@ -59,14 +59,14 @@ def main():
     # create_coke_tower()
 
     # underground
-    # create_mazes()
+    create_mazes()
 
     #######################################
     #            Main game loop           #
     #######################################
 
     # move player around to see the world
-    take_a_tour()
+    # take_a_tour()
 
     # loop to activate traps in maze
     while not Global.end_game:

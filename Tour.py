@@ -10,15 +10,16 @@ from signal import SIGINT, signal
 import sys
 import Global
 
-record_delay = 0.75
-init_hansel_pos = Vec3(-90, 0, 127)
+delay = 0.075
+init_hansel_pos = Vec3(105, 0, 127)
+
+count = 0
 
 
 def take_a_tour():
     """ move player around the map to show he/she the world"""
-
     # setup
-    global record_delay, init_hansel_pos
+    global delay, init_hansel_pos
     hansel = Global.hansel
 
     # move player to init position
@@ -41,11 +42,8 @@ def take_a_tour():
         mes = data[1]
         message[pos] = mes
 
-    # how long each step is
-    step_length = 0.1
-
     # move player around the map
-    count = 0
+    global count
     for line in f:
         # get values from a line of text
         data = line.strip()
@@ -61,25 +59,8 @@ def take_a_tour():
         y = float(y)
         z = float(z)
 
-        # a vector from current position to the new position
-        movement = Vec3(x, y, z) - hansel.getPos()
-
-        if movement.length() > 0:
-            # a vector from current position to the new destination with the length of 1
-            step = movement / movement.length()
-            # change vector's length
-            step *= step_length
-        else:
-            # stand still
-            step = Vec3(0, 0, 0)
-
-        # move player
-        number_of_step = int(movement.length() / step_length)
-        play_back_delay = 0.05 if number_of_step == 0 else record_delay / number_of_step / 2
-        for i in xrange(number_of_step):
-            new_pos = hansel.getPos() + step
-            hansel.setPos(new_pos.x, new_pos.y, new_pos.z)
-            sleep(play_back_delay)
+        hansel.setPos(x, y, z)
+        sleep(delay * 2)
 
     # by this time the player is already on the trap
     # push player into maze
@@ -119,7 +100,7 @@ def create_a_tour():
         sys.exit(0)
 
     # setup
-    global record_delay
+    global delay
     hansel = Global.hansel
     signal(SIGINT, signal_handler)
 
@@ -140,7 +121,8 @@ def create_a_tour():
         y.append(position.y)
         z.append(position.z)
         print str(len(x)) + "  " + str(position)
-        sleep(record_delay)
+        sleep(delay)
+
 
 # test
 if __name__ == '__main__':

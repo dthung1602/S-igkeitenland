@@ -92,7 +92,7 @@ class Message(TriggerComeClose):
 
 class Riddle(TriggerComeClose):
     riddle_num = 0
-    number_of_riddle = 5
+    number_of_riddle = 6
 
     def __init__(self, x, y, z):
         TriggerComeClose.__init__(self, x, y, z, 3, DIAMOND_BLOCK.id, 0, True)
@@ -436,6 +436,7 @@ trap = {
     'g': FallSand,
     'h': TrapInHoleX,
     'I': TrapInHoleZ,
+    'j': Riddle
 }
 
 # test
@@ -464,6 +465,7 @@ if __name__ == '__main__':
     GPIO.setup(Global.B, GPIO.IN)
     GPIO.setup(Global.C, GPIO.IN)
     GPIO.setup(Global.D, GPIO.IN)
+    GPIO.setup(Global.E, GPIO.IN)
 
     Riddle(x, y, z + 5)
 
