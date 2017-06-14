@@ -17,7 +17,6 @@
 
 import RPi.GPIO as GPIO
 
-from World import *
 from Tour import *
 
 
@@ -59,14 +58,14 @@ def main():
     # create_coke_tower()
 
     # underground
-    create_mazes()
+    # create_mazes()
 
     #######################################
     #            Main game loop           #
     #######################################
 
     # move player around to see the world
-    # take_a_tour()
+    take_a_tour()
 
     # loop to activate traps in maze
     while not Global.end_game:

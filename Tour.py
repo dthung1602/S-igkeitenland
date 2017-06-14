@@ -5,22 +5,23 @@
     and a function to record player position
 """
 
-from Trap import *
-from signal import SIGINT, signal
 import sys
+from signal import SIGINT, signal
+
 import Global
+from Trap import *
 
-delay = 0.075
+record_delay = 0.075
 init_hansel_pos = Vec3(105, 0, 127)
-
-count = 0
 
 
 def take_a_tour():
     """ move player around the map to show he/she the world"""
     # setup
-    global delay, init_hansel_pos
+    global record_delay, init_hansel_pos
     hansel = Global.hansel
+    number_of_step = 5
+    play_back_delay = record_delay / number_of_step * 1.5
 
     # move player to init position
     hansel.setTilePos(init_hansel_pos.x, init_hansel_pos.y, init_hansel_pos.z)
@@ -43,24 +44,30 @@ def take_a_tour():
         message[pos] = mes
 
     # move player around the map
-    global count
+    count = 0
     for line in f:
         # get values from a line of text
         data = line.strip()
         x, y, z = data.split()
 
-        # display message
+        # display message and read it
         if count in message.keys():
-            mc.postToChat(message[count])
+            Global.output_message(message[count])
         count += 1
 
-        # convert to number
-        x = float(x)
-        y = float(y)
-        z = float(z)
+        # vec3 points from current position to new position
+        movement = Vec3(float(x), float(y), float(z)) - hansel.getPos()
 
-        hansel.setPos(x, y, z)
-        sleep(delay * 2)
+        # divide movement to steps
+        step = movement / number_of_step
+
+        # move hansel
+        old_pos = hansel.getPos()
+
+        for i in xrange(number_of_step):
+            new_pos = old_pos + step
+            hansel.setPos(new_pos.x, new_pos.y, new_pos.z)
+            sleep(play_back_delay)
 
     # by this time the player is already on the trap
     # push player into maze
@@ -69,10 +76,11 @@ def take_a_tour():
                  x + 1, y - 1, z + 1, AIR)
 
     # print message
-    sleep(2)
-    mc.postToChat("It's look like that you have fall into the trap of the evil witch!")
-    sleep(3)
-    mc.postToChat("You must solve the maze to get to the ground. There's no other way around")
+    sleep(5)
+    Global.output_message("It's look like that you have fall into the trap of the evil witch!")
+
+    sleep(5)
+    Global.output_message("You must solve the maze to get to the ground. There's no other way around")
 
 
 def create_a_tour():
@@ -100,7 +108,7 @@ def create_a_tour():
         sys.exit(0)
 
     # setup
-    global delay
+    global record_delay
     hansel = Global.hansel
     signal(SIGINT, signal_handler)
 
@@ -121,7 +129,7 @@ def create_a_tour():
         y.append(position.y)
         z.append(position.z)
         print str(len(x)) + "  " + str(position)
-        sleep(delay)
+        sleep(record_delay)
 
 
 # test

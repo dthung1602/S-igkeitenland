@@ -75,19 +75,8 @@ class TriggerComeClose(object):
 
 
 ###################################################################################
-#                           Messages & Riddles                                    #
+#                                   Riddles                                       #
 ###################################################################################
-
-
-class Message(TriggerComeClose):
-    """Base class for showing message to player"""
-
-    def __init__(self, x, y, z, message, d=2, block_type=0, block_data=0, one_time=True):
-        TriggerComeClose.__init__(self, x, y, z, d, block_type, block_data, one_time)
-        self.message = message
-
-    def action(self):
-        mc.postToChat(self.message)
 
 
 class Riddle(TriggerComeClose):
@@ -130,7 +119,7 @@ class Riddle(TriggerComeClose):
     @staticmethod
     def wrong():
         """what happens when player's answer is incorrect"""
-        mc.postToChat("Wrong! You will die")
+        Global.output_message("Wrong! You will die")
 
         # build a wall surround player
         x = Global.x_surround
@@ -142,7 +131,7 @@ class Riddle(TriggerComeClose):
     @staticmethod
     def right():
         """what happens when player's answer is correct"""
-        mc.postToChat("Correct! You may go")
+        Global.output_message("Correct! You may go")
 
         # build a wall surround player
         x = Global.x_surround
@@ -404,7 +393,11 @@ class FinalTrap(TriggerComeClose):
                      Global.tilePos.x + length - 3, Global.tilePos.y - 1, Global.tilePos.z, GRASS)
 
         # show message and wait for player to read
-        mc.postToChat("You have been told NOT to enter the Coke tower. Now you must pay. RUN")
+        Global.output_message("You have been told not to enter the Coke tower")
+        sleep(3)
+        Global.output_message("The Great Coke God is very angry")
+        sleep(2)
+        Global.output_message("Now you must pay. Run")
         sleep(3)
 
         # start destroying the bridge. if player jump to land then make a hole

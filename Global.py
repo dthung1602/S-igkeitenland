@@ -2,6 +2,8 @@
     This file contains shared variables and constants
 """
 
+import os
+
 from mcpi import minecraft
 from mcpi.block import *
 
@@ -56,3 +58,16 @@ color = [
     WOOL_GREEN,
     WOOL_RED,
 ]
+
+
+######################################
+#             Functions              #
+######################################
+
+
+def output_message(message):
+    # display text
+    mc.postToChat(message)
+
+    # read the message
+    os.system("espeak -ven+f3 -s120 -k10 \"" + message + "\" &>/dev/null")
