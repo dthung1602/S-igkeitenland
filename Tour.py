@@ -20,7 +20,7 @@ def take_a_tour():
     # setup
     global record_delay, init_hansel_pos
     hansel = Global.hansel
-    number_of_step = 5
+    number_of_step = 10
     play_back_delay = record_delay / number_of_step * 1.5
 
     # move player to init position
@@ -63,9 +63,9 @@ def take_a_tour():
 
         # move hansel
         old_pos = hansel.getPos()
-
         for i in xrange(number_of_step):
             new_pos = old_pos + step
+            old_pos = new_pos
             hansel.setPos(new_pos.x, new_pos.y, new_pos.z)
             sleep(play_back_delay)
 

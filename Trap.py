@@ -255,8 +255,8 @@ class StoneBlockWayX(TriggerStepOn):
         y = Global.pos.y
         z = Global.pos.z
         for i in xrange(4):
-            mc.setBlock(x + 5, y, z, STONE_BRICK)
-            mc.setBlock(x - 5, y, z, STONE_BRICK)
+            mc.setBlock(x + 2, y, z, STONE_BRICK)
+            mc.setBlock(x - 2, y, z, STONE_BRICK)
             y += 1
             sleep(2)
 
@@ -272,8 +272,8 @@ class StoneBlockWayZ(TriggerStepOn):
         y = Global.pos.y
         z = Global.pos.z
         for i in xrange(4):
-            mc.setBlock(x, y, z + 3, STONE_BRICK)
-            mc.setBlock(x, y, z - 3, STONE_BRICK)
+            mc.setBlock(x, y, z + 2, STONE_BRICK)
+            mc.setBlock(x, y, z - 2, STONE_BRICK)
             y += 1
             sleep(3)
 

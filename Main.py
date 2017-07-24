@@ -10,13 +10,14 @@
                 Huynh Vinh Long,    Le Hong Thang
     Due day: 15/06/2017
     Description: a MineCraft world based on “Hansel and Gretel” of the Brothers Grimm
-    Connection:
+    Connection: each pin 5, 6, 13, 19, 26 (BCM numbering) is connected to a pull-up 330 Ohm resistor
+                and to a button that attached to ground
     Reference: minecraftstuff package from www.github.com/martinohanlon/minecraft-stuff
                A modified version of it is used to create basic shapes (circle, line, sphere, etc)
 """
 
 import RPi.GPIO as GPIO
-
+from World import *
 from Tour import *
 
 
@@ -58,14 +59,16 @@ def main():
     # create_coke_tower()
 
     # underground
-    # create_mazes()
+    # ground
+    mc.setBlocks(127, Global.GROUND_HEIGHT, 127, -128, -64, -128, GOLD_BLOCK)
+    create_mazes()
 
     #######################################
     #            Main game loop           #
     #######################################
 
     # move player around to see the world
-    take_a_tour()
+    # take_a_tour()
 
     # loop to activate traps in maze
     while not Global.end_game:
